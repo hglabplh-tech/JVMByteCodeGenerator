@@ -13,7 +13,10 @@
    [org.ow2.asm/asm-analysis "9.6"]
    [org.clojure/core.async "1.6.681"]
    [de.active-group/active-clojure "0.42.2"]
-   [clojure-interop/apache-commons-io "1.0.0"]]
+   [clojure-interop/apache-commons-io "1.0.0"]
+   [log4j/log4j "1.2.17"]
+   [org.javassist/javassist "3.25.0-GA"]
+   [commons-cli/commons-cli "1.6.0"]]
   :source-paths ["src"]
   :java-source-paths ["src/main/java"]                      ; Java source is stored separately.
   :test-paths ["test/clj"]

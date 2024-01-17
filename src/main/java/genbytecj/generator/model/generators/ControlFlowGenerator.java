@@ -50,7 +50,8 @@ class ControlFlowGenerator extends Generator {
     private final MathGenerator mathGenerator;
     private final Randomizer randomizer;
 
-    public ControlFlowGenerator(Random rand, RandomCodeGenerator randomCodeGenerator, MathGenerator mathGenerator) {
+    public ControlFlowGenerator(Random rand, RandomCodeGenerator randomCodeGenerator,
+                                MathGenerator mathGenerator) {
         super(rand, randomCodeGenerator.getClazzFileContainer());
         this.randomCodeGenerator = randomCodeGenerator;
         this.ifBranchingFactor = randomCodeGenerator.getController().getIfBranchingFactor().toInteger();

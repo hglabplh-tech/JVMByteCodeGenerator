@@ -1,6 +1,12 @@
 package genbytecj.generator.model.startpoint;
 
+import genbytecj.generator.model.generators.RandomCodeGenerator;
+import genbytecj.generator.model.generators.SnippetGenerator;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Random;
 
 public class GenerationController {
 
@@ -222,5 +228,22 @@ public class GenerationController {
 
     public ExecutionOps.OptValue<?> getArrayRestrictionProbability() {
         return controlValues.get(LibOptions.ARRAY_RESTRICTION);
+    }
+
+    public  SnippetGenerator initSnippetGen () throws IOException {
+        Random rand = new Random(875687578);
+        File tmpFile = File.createTempFile("tmpClazz" ,"class");
+        RandomCodeGenerator rCodeGen = new RandomCodeGenerator(tmpFile.getAbsolutePath(), this);
+        SnippetGenerator snippetGen = new SnippetGenerator(rand, rCodeGen);
+        return snippetGen;
+
+
+    }
+
+    public  RandomCodeGenerator initRandCodeGen () throws IOException {
+        Random rand = new Random(875687578);
+        File tmpFile = File.createTempFile("tmpClazz" ,"class");
+        RandomCodeGenerator rCodeGen = new RandomCodeGenerator(tmpFile.getAbsolutePath(), this);
+        return rCodeGen;
     }
 }

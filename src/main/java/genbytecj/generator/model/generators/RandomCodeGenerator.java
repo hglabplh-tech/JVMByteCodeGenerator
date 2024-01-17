@@ -39,8 +39,12 @@ public class RandomCodeGenerator {
 
     private final GenerationController controller;
 
+
+
     //Generators
     private final FieldVarGenerator fieldVarGenerator;
+
+
     private final MethodGenerator methodGenerator;
     private final MathGenerator mathGenerator;
     private final SnippetGenerator snippetGenerator;
@@ -311,7 +315,6 @@ public class RandomCodeGenerator {
                     controlFlowGenerator.getDepth() < controller.getControlFlowDeepness().toInteger()) {
                 int controlKind = rand.nextInt(4);
                 boolean noStatementGenerated = true;
-                int ctrlTypeProb = 1 + rand.nextInt(100);
                 for (int j = 0; j < 4 && noStatementGenerated; j++) {
                     switch (controlKind) {
                         case 0:
@@ -472,6 +475,32 @@ public class RandomCodeGenerator {
         return null;
     }
 
+    public FieldVarGenerator getFieldVarGenerator() {
+        return fieldVarGenerator;
+    }
+    public MethodGenerator getMethodGenerator() {
+        return methodGenerator;
+    }
+
+    public MathGenerator getMathGenerator() {
+        return mathGenerator;
+    }
+
+    public SnippetGenerator getSnippetGenerator() {
+        return snippetGenerator;
+    }
+
+    public TypeCastGenerator getTypeCastGenerator() {
+        return typeCastGenerator;
+    }
+
+    public ControlFlowGenerator getControlFlowGenerator() {
+        return controlFlowGenerator;
+    }
+
+    public ArrayAccessGenerator getArrayAccessGenerator() {
+        return arrayAccessGenerator;
+    }
 
     public void writeFile() {
         fieldVarGenerator.writeFile();

@@ -53,8 +53,8 @@ class ControlFlowGenerator extends Generator {
     public ControlFlowGenerator(Random rand, RandomCodeGenerator randomCodeGenerator, MathGenerator mathGenerator) {
         super(rand, randomCodeGenerator.getClazzFileContainer());
         this.randomCodeGenerator = randomCodeGenerator;
-        this.ifBranchingFactor = randomCodeGenerator.getController().getIfBranchingFactor();
-        this.maxLoopIterations = randomCodeGenerator.getController().getMaxLoopIterations();
+        this.ifBranchingFactor = randomCodeGenerator.getController().getIfBranchingFactor().toInteger();
+        this.maxLoopIterations = randomCodeGenerator.getController().getMaxLoopIterations().toInteger();
         this.mathGenerator = mathGenerator;
         this.randomizer = new Randomizer(rand);
     }
@@ -113,7 +113,7 @@ class ControlFlowGenerator extends Generator {
             boolean useNoVars = kind == ARITHMETIC_LOGICAL || kind == ARITHMETIC_LOGICAL_BITWISE;
             return mathGenerator.srcGenerateOperatorStatement(
                     method,
-                    randomCodeGenerator.getController().getMaxOperators(),
+                    randomCodeGenerator.getController().getMaxOperators().toInteger(),
                     kind,
                     useNoVars
             );

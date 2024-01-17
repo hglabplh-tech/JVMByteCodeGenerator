@@ -3,7 +3,6 @@
   :min-lein-version "2.0.0"
   :license {:name "Eclipse Public License"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
-  :main hgp.ass370/ass-main
   :dependencies
   [[org.clojure/clojure "1.11.1"]
    [org.ow2.asm/asm "9.6"]

@@ -2,7 +2,7 @@ package genbytecj.generator.model.utils;
 
 
 
-import genbytecj.generator.model.cli.GenerationController;
+import genbytecj.generator.model.startpoint.GenerationController;
 import genbytecj.generator.model.logger.ClazzLogger;
 import genbytecj.generator.model.metamodel.exceptions.CompilationFailedException;
 import genbytecj.generator.model.metamodel.resolvers.JavassistResolver;
@@ -35,13 +35,12 @@ public class ClazzFileContainer {
 
         this.randomSupplier = new RandomSupplier(
                 rand,
-                controller.getMaxArrayDimensions(),
-                controller.getMaxArrayDimensionSize(),
-                controller.getPrimitiveTypesProbability(),
-                controller.getObjectProbability(),
-                controller.getArrayProbability(),
-                controller.getVoidProbability(),
-                controller.getArrayRestrictionProbability()
+                controller.getMaxArrayDimensions().toInteger(),
+                controller.getMaxArrayDimensionSize().toInteger(),
+                controller.getPrimitiveTypesProbability().toBoolean(),
+                controller.getObjectProbability().toBoolean(),
+                controller.getArrayProbability().toBoolean(),
+                controller.getVoidProbability().toBoolean()
         );
 
         this.fileName = fileName;

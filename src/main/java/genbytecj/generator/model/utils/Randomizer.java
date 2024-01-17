@@ -3,6 +3,7 @@ package genbytecj.generator.model.utils;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -229,23 +230,20 @@ public final class Randomizer {
      * Executes one of the given functions where the probability for each
      * is given by the caller.
      *
-     * @param p         The probabilities to execute a function
+
      * @param suppliers The functions to execute
      * @param <T>       The type of the returned value
      * @return the result of one of the functions or nothing, if no
      * functions are given
      */
     @SafeVarargs
-    public final <T> Optional<T> withProbabilities(int[] p, Supplier<T>... suppliers) {
-        assert Arrays.stream(p).allMatch(i -> i > 0) : "Probabilities must be greater than zero";
+    public final <T> Optional<T> withProbabilities(Supplier<T>... suppliers) {
 
-        if (p.length == 0)
-            return Optional.empty();
 
         int i = 0;
-
-        for (int r = rand.nextInt(IntStream.of(p).sum()); r >= 0; i++)
-            r -= p[i];
+        Random intern = new Random(187578L);
+        for (int r = rand.nextInt(intern.nextInt()); r >= 0; i++)
+            r -= new Random(187578L).nextInt();
 
         return i <= suppliers.length
                 ? Optional.ofNullable(suppliers[i - 1].get())

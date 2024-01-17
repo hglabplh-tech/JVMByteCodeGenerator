@@ -1,6 +1,6 @@
-package genbytecj.generator.model.cli;
+package genbytecj.generator.model.startpoint;
 
-enum CLIOptions {
+enum LibOptions {
     L,
     H,
     F,

@@ -2,7 +2,7 @@ package genbytecj.generator.model.generators;
 
 
 
-import genbytecj.generator.model.cli.GenerationController;
+import genbytecj.generator.model.startpoint.GenerationController;
 import genbytecj.generator.model.logger.ClazzLogger;
 import genbytecj.generator.model.logger.MethodLogger;
 import genbytecj.generator.model.metamodel.exceptions.CompilationFailedException;
@@ -63,7 +63,7 @@ public class RandomCodeGenerator {
     public RandomCodeGenerator(String fileName, GenerationController controller) {
         this.controller = controller;
 
-        this.seed = controller.getSeedValue();
+        this.seed = controller.getSeedValue().toInteger();
 
         // reset the types
         TypeCache.CACHE.reset();
@@ -74,11 +74,11 @@ public class RandomCodeGenerator {
         this.rand = new Random(seed);
 
         ClazzFileContainer container = new ClazzFileContainer(rand, controller, fileName);
-        maxOpProbability = Collections.max(Arrays.asList(controller.getBitwiseProbability(),
-                controller.getArithmeticBitwiseProbability(),
-                controller.getArithmeticLogicalBitwiseProbability(),
-                controller.getArithmeticLogicalProbability(),
-                controller.getArithmeticProbability()));
+        maxOpProbability = Collections.max(Arrays.asList(controller.getBitwiseProbability().toInteger(),
+                controller.getArithmeticBitwiseProbability().toInteger(),
+                controller.getArithmeticLogicalBitwiseProbability().toInteger(),
+                controller.getArithmeticLogicalProbability().toInteger(),
+                controller.getArithmeticProbability().toInteger()));
         this.fieldVarGenerator = new FieldVarGenerator(rand, container);
 
         this.methodGenerator = new MethodGenerator(rand, this);
@@ -89,10 +89,10 @@ public class RandomCodeGenerator {
         this.arrayAccessGenerator = new ArrayAccessGenerator(rand, container);
 
         this.methodGenerator.generateRunMethod();
-        Context.PROGRAM_CONTEXT.lengthWeighting = controller.getProgramLengthWeighting();
+        Context.PROGRAM_CONTEXT.lengthWeighting = controller.getProgramLengthWeighting().toInteger();
         Context.PROGRAM_CONTEXT.contextMethod = getClazzLogger().run();
-        Context.METHOD_CONTEXT.lengthWeighting = controller.getMethodLengthWeighting();
-        Context.CONTROL_CONTEXT.lengthWeighting = controller.getControlLengthWeighting();
+        Context.METHOD_CONTEXT.lengthWeighting = controller.getMethodLengthWeighting().toInteger();
+        Context.CONTROL_CONTEXT.lengthWeighting = controller.getControlLengthWeighting().toInteger();
     }
 
     public GenerationController getController() {
@@ -117,7 +117,7 @@ public class RandomCodeGenerator {
                     .forEach(methodGenerator::generateMethodBody);
             // compute HashValue of all globals
             this.methodGenerator.generateHashMethod();
-            this.methodGenerator.callRunAndHashMethods(controller.executeRunXTimes());
+            this.methodGenerator.callRunAndHashMethods(controller.executeRunXTimes().toInteger());
         } catch (CompilationFailedException e) {
             logger.fatal("Could not finish generation of class {} due to compilation errors " + getClazzFileContainer().getFileName());
             logger.fatal("The seed that was used to initialize the random generator was " + seed);
@@ -139,15 +139,17 @@ public class RandomCodeGenerator {
         for (int i = 0; i < l; i++) {
             int r = 1 + rand.nextInt(100);
 
-            if (context == Context.PROGRAM_CONTEXT && r <= controller.getFieldProbability()) {
+            if ((context == Context.PROGRAM_CONTEXT) &&
+                    (controller.getFieldProbability().toBoolean())) {
                 fieldVarGenerator.generateField();
             }
 
-            if (r <= controller.getLocalVariableProbability() && context != Context.CONTROL_CONTEXT) {
+            if ((controller.getLocalVariableProbability().toBoolean()) &&
+                    (context != Context.CONTROL_CONTEXT)) {
                 fieldVarGenerator.generateLocalVariable(context.contextMethod);
             }
 
-            if (r <= controller.getGlobalAssignProbability()) {
+            if (controller.getGlobalAssignProbability().toBoolean()) {
                 String src = null;
                 int assignKind = rand.nextInt(3);
                 switch (assignKind) {
@@ -179,7 +181,8 @@ public class RandomCodeGenerator {
                 }
             }
 
-            if (context != Context.CONTROL_CONTEXT && r <= controller.getArrayAccessProbability()) {
+            if (context != Context.CONTROL_CONTEXT &&
+                    controller.getArrayAccessProbability().toBoolean()) {
                 new Randomizer(rand).oneOf(
                         () -> arrayAccessGenerator.srcGenerateArrayReadAccess(context.contextMethod),
                         () -> arrayAccessGenerator.srcGenerateArrayWriteAccess(context.contextMethod))
@@ -187,7 +190,7 @@ public class RandomCodeGenerator {
                                 arrayAccessGenerator.insertIntoMethodBody(context.contextMethod, src));//, Arrays.asList(ArrayIndexOutOfBoundsException.class, NullPointerException.class)));
             }
 
-            if (r <= controller.getLocalAssignProbability() && context != Context.CONTROL_CONTEXT) {
+            if (controller.getLocalAssignProbability().toBoolean() && context != Context.CONTROL_CONTEXT) {
                 int assignKind = rand.nextInt(3);
                 String src = null;
                 switch (assignKind) {
@@ -218,15 +221,18 @@ public class RandomCodeGenerator {
                 }
             }
 
-            if (context == Context.PROGRAM_CONTEXT && r <= controller.getMethodProbability()) {
-                methodGenerator.generateMethod(controller.getMaximumMethodParameters());
+            if (context == Context.PROGRAM_CONTEXT &&
+                    controller.getMethodProbability().toBoolean()) {
+                methodGenerator.generateMethod(controller.getMaximumMethodParameters().toInteger());
             }
 
-            if (context == Context.PROGRAM_CONTEXT && r <= controller.getMethodOverloadProbability()) {
-                methodGenerator.overloadMethod(controller.getMaximumMethodParameters());
+            if (context == Context.PROGRAM_CONTEXT &&
+                    controller.getMethodOverloadProbability().toBoolean()) {
+                methodGenerator.overloadMethod(controller.getMaximumMethodParameters().toInteger());
+
             }
 
-            if (r <= controller.getMethodCallProbability()) {
+            if (controller.getMethodCallProbability().toBoolean()) {
                 int callKind = rand.nextInt(3);
                 String src = null;
                 switch (callKind) {
@@ -238,14 +244,16 @@ public class RandomCodeGenerator {
                         }
                         break;
                     case 1: //assign return value of called method to field
-                        if (context == Context.CONTROL_CONTEXT && r <= controller.getGlobalAssignProbability())
+                        if (context == Context.CONTROL_CONTEXT &&
+                                controller.getGlobalAssignProbability().toBoolean())
                             src = methodGenerator.srcSetFieldToReturnValue(context.contextMethod);
                         else {
                             methodGenerator.setFieldToReturnValue(context.contextMethod);
                         }
                         break;
                     case 2: //assign return value of called method to local variable
-                        if (context == Context.CONTROL_CONTEXT && r <= controller.getLocalAssignProbability()) {
+                        if (context == Context.CONTROL_CONTEXT &&
+                                controller.getLocalAssignProbability().toBoolean()) {
                             src = methodGenerator.srcSetLocalVarToReturnValue(context.contextMethod);
                         } else {
                             methodGenerator.setLocalVarToReturnValue(context.contextMethod);
@@ -256,7 +264,7 @@ public class RandomCodeGenerator {
                     controlFlowGenerator.addCodeToControlSrc(src);
                 }
             }
-            if (r <= controller.getJavaLangMathProbability()) {
+            if (controller.getJavaLangMathProbability().toBoolean()) {
                 int callKind = rand.nextInt(3);
                 String src = null;
                 switch (callKind) {
@@ -287,7 +295,7 @@ public class RandomCodeGenerator {
                 }
             }
 
-            if (r <= controller.getPrintProbability()) {
+            if (controller.getPrintProbability().toBoolean()) {
                 String src = null;
                 if (context == Context.CONTROL_CONTEXT) {
                     src = fieldVarGenerator.srcGeneratePrintStatement(context.contextMethod);
@@ -299,14 +307,15 @@ public class RandomCodeGenerator {
                 }
             }
 
-            if (r <= controller.getControlFlowProbability() && controlFlowGenerator.getDepth() < controller.getControlFlowDeepness()) {
+            if (controller.getControlFlowProbability().toBoolean() &&
+                    controlFlowGenerator.getDepth() < controller.getControlFlowDeepness().toInteger()) {
                 int controlKind = rand.nextInt(4);
                 boolean noStatementGenerated = true;
                 int ctrlTypeProb = 1 + rand.nextInt(100);
                 for (int j = 0; j < 4 && noStatementGenerated; j++) {
                     switch (controlKind) {
                         case 0:
-                            if (ctrlTypeProb <= controller.getIfProbability()) {
+                            if (controller.getIfProbability().toBoolean()) {
                                 controlFlowGenerator.generateIfElseStatement(context.contextMethod);
                                 noStatementGenerated = false;
                             } else {
@@ -314,7 +323,7 @@ public class RandomCodeGenerator {
                             }
                             break;
                         case 1:
-                            if (ctrlTypeProb <= controller.getWhileProbability()) {
+                            if (controller.getWhileProbability().toBoolean()) {
                                 controlFlowGenerator.generateWhileStatement(context.contextMethod);
                                 noStatementGenerated = false;
                             } else {
@@ -322,7 +331,7 @@ public class RandomCodeGenerator {
                             }
                             break;
                         case 2:
-                            if (ctrlTypeProb <= controller.getDoWhileProbability()) {
+                            if (controller.getDoWhileProbability().toBoolean()) {
                                 controlFlowGenerator.generateDoWhileStatement(context.contextMethod);
                                 noStatementGenerated = false;
                             } else {
@@ -330,7 +339,7 @@ public class RandomCodeGenerator {
                             }
                             break;
                         case 3:
-                            if (ctrlTypeProb <= controller.getForProbability()) {
+                            if (controller.getForProbability().toBoolean()) {
                                 controlFlowGenerator.generateForStatement(context.contextMethod);
                                 noStatementGenerated = false;
                             } else {
@@ -342,13 +351,14 @@ public class RandomCodeGenerator {
             }
 
 
-            if (r <= controller.getOperatorStatementProbability()) {
+            if (Boolean.TRUE.equals(controller.getOperatorStatementProbability())) {
                 int globalOrLocalOrNotAssign;
-                if (r <= controller.getLocalAssignProbability() && r <= controller.getGlobalAssignProbability()) {
+                if ((Boolean.TRUE.equals(controller.getLocalAssignProbability())) &&
+                        (Boolean.TRUE.equals(controller.getGlobalAssignProbability()))) {
                     globalOrLocalOrNotAssign = rand.nextInt(3);
-                } else if (r <= controller.getGlobalAssignProbability()) {
+                } else if (Boolean.TRUE.equals(controller.getGlobalAssignProbability())) {
                     globalOrLocalOrNotAssign = 0;
-                } else if (r <= controller.getLocalAssignProbability()) {
+                } else if (Boolean.TRUE.equals(controller.getLocalAssignProbability())) {
                     globalOrLocalOrNotAssign = 1;
                 } else {
                     globalOrLocalOrNotAssign = 2;
@@ -360,7 +370,7 @@ public class RandomCodeGenerator {
                     continue;
                 }
 
-                int maxOperations = controller.getMaxOperators();
+                int maxOperations = controller.getMaxOperators().toInteger();
                 String src = null;
                 switch (globalOrLocalOrNotAssign) {
                     case 0:
@@ -389,16 +399,16 @@ public class RandomCodeGenerator {
                 }
             }
 
-            if (r <= controller.getSnippetProbability())
+            if (Boolean.TRUE.equals(controller.getSnippetProbability()))
                 snippetGenerator.generate(context.contextMethod);
 
-            if (r <= controller.getTypeCastProbability())
+            if (Boolean.TRUE.equals(controller.getTypeCastProbability()))
                 typeCastGenerator.generatePrimitiveTypeCast(context.contextMethod);
 
-            if (r <= controller.getBreakProbability())
+            if (Boolean.TRUE.equals(controller.getBreakProbability()))
                 controlFlowGenerator.insertBreak();
 
-            if (r <= controller.getPreemptiveReturnProbability()) {
+            if (Boolean.TRUE.equals(controller.getPreemptiveReturnProbability())) {
                 methodGenerator.insertReturn(context.contextMethod);
             }
         }
@@ -410,49 +420,49 @@ public class RandomCodeGenerator {
         for (int i = 0; i < Operator.OpStatKind.values().length; i++) {
             switch (selectedKind) {
                 case ARITHMETIC:
-                    if (opProb <= controller.getArithmeticProbability()) {
+                    if (Boolean.TRUE.equals(controller.getArithmeticProbability())) {
                         return ARITHMETIC;
                     } else {
                         selectedKind = LOGICAL;
                         break;
                     }
                 case LOGICAL:
-                    if (opProb <= controller.getLogicalProbability()) {
+                    if (Boolean.TRUE.equals(controller.getLogicalProbability())) {
                         return LOGICAL;
                     } else {
                         selectedKind = BITWISE;
                         break;
                     }
                 case BITWISE:
-                    if (opProb <= controller.getBitwiseProbability()) {
+                    if (Boolean.TRUE.equals(controller.getBitwiseProbability())) {
                         return BITWISE;
                     } else {
                         selectedKind = ARITHMETIC_LOGICAL;
                         break;
                     }
                 case ARITHMETIC_LOGICAL:
-                    if (opProb <= controller.getArithmeticLogicalProbability()) {
+                    if (Boolean.TRUE.equals(controller.getArithmeticLogicalProbability())) {
                         return ARITHMETIC_LOGICAL;
                     } else {
                         selectedKind = ARITHMETIC_BITWISE;
                         break;
                     }
                 case ARITHMETIC_BITWISE:
-                    if (opProb <= controller.getArithmeticBitwiseProbability()) {
+                    if (Boolean.TRUE.equals(controller.getArithmeticBitwiseProbability())) {
                         return ARITHMETIC_BITWISE;
                     } else {
                         selectedKind = BITWISE_LOGICAL;
                         break;
                     }
                 case BITWISE_LOGICAL:
-                    if (opProb <= controller.getLogicBitwiseProbability()) {
+                    if (Boolean.TRUE.equals(controller.getLogicBitwiseProbability())) {
                         return BITWISE_LOGICAL;
                     } else {
                         selectedKind = ARITHMETIC_LOGICAL_BITWISE;
                         break;
                     }
                 case ARITHMETIC_LOGICAL_BITWISE:
-                    if (opProb <= controller.getArithmeticLogicalBitwiseProbability()) {
+                    if (Boolean.TRUE.equals(controller.getArithmeticLogicalBitwiseProbability())) {
                         return ARITHMETIC_LOGICAL_BITWISE;
                     } else {
                         selectedKind = ARITHMETIC;

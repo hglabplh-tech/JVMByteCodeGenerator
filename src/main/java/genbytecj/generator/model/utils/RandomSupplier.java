@@ -8,7 +8,6 @@ import genbytecj.generator.model.types.base.ArrayType;
 import genbytecj.generator.model.types.base.MetaType;
 import genbytecj.generator.model.types.base.RefType;
 import genbytecj.generator.model.types.specializations.RestrictedIntType;
-import genbytecj.generator.model.utils.StatementDSL.*;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -25,13 +24,13 @@ import static genbytecj.generator.model.utils.ErrorUtils.shouldNotReachHere;
 
 public class RandomSupplier {
 
-    private final int maxArrayDim;
-    private final int maxArrayDimSize;
-    private final int pPrimitives;
-    private final int pObjects;
-    private final int pArray;
-    private final int pVoid;
-    private final int pRestrictedArray;
+    private final  Integer  maxArrayDim;
+    private final  Integer  maxArrayDimSize;
+    private final  Boolean  pPrimitives;
+    private final  Boolean pObjects;
+
+    private final Boolean pVoid;
+    private final  Boolean  pRestrictedArray;
 
     private int methodCharNum = 97;
     private int varCharNum = 97;
@@ -53,7 +52,12 @@ public class RandomSupplier {
             Modifier.PROTECTED
     );
 
-    public RandomSupplier(Random rand, int maxArrayDim, int maxArrayDimSize, int pPrimitives, int pObjects, int pArray, int pVoid, int pRestrictedArray) {
+    public RandomSupplier(Random rand,  Integer maxArrayDim,
+                          Integer  maxArrayDimSize,  Boolean  pPrimitives,
+                          Boolean  pObjects,
+                          Boolean  pVoid,
+                          Boolean pRestrictedArray) {
+
         this.rand = rand;
         this.randomizer = new Randomizer(rand);
 
@@ -61,7 +65,7 @@ public class RandomSupplier {
         this.maxArrayDimSize = maxArrayDimSize;
         this.pPrimitives = pPrimitives;
         this.pObjects = pObjects;
-        this.pArray = pArray;
+
         this.pVoid = pVoid;
         this.pRestrictedArray = pRestrictedArray;
     }
@@ -144,7 +148,6 @@ public class RandomSupplier {
      */
     public MetaType<?> type() {
         return randomizer.withProbabilities(
-                new int[]{pPrimitives, pObjects, pArray, pRestrictedArray},
                 this::primitiveType,
                 this::classType,
                 () -> arrayType(rand.nextInt(maxArrayDim) + 1),
@@ -172,7 +175,6 @@ public class RandomSupplier {
      */
     public MetaType<?> returnType() {
         return randomizer.withProbabilities(
-                new int[]{pVoid, 100 - pVoid},
                 () -> VOID,
                 this::type
         ).orElseThrow(() -> new AssertionError("Could not fetch random return type"));

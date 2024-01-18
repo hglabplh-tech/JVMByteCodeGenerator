@@ -19,7 +19,7 @@
    :volatile     (Modifier/VOLATILE)}
   )
 
-(defn type-constants
+(def type-constants
   {:booleanType (CtClass/booleanType)
    :byteType    (CtClass/byteType)
    :charType    (CtClass/charType)

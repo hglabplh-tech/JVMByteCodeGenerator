@@ -1,4 +1,5 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.class-gen
+  (:require [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env])
   (:import (javassist ClassPool CtMethod CtNewMethod CtClass)
            (java.lang Class)) )
 ;;evalClass.addField
@@ -12,10 +13,10 @@
 ;;evalClass.addMethod
 ;; CtNewMethod.make ("public double rnd() { return rnd.nextDouble(); }", evalClass)) ;
 (defn new-clazz [clazz-name]
-  (let [pool (ClassPool/getDefault)
-        clazz (.makeClass pool clazz-name)
+  (let [[const-pool class-pool] (env/get-pools)
+        clazz (.makeClass class-pool clazz-name)
         ]
-    clazz))
+   [class-pool const-pool clazz]))
 
 (defn def-main-class []
   (let [class-pool (ClassPool/getDefault)

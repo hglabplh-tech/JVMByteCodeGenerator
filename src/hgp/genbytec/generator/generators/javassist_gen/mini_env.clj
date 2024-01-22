@@ -19,6 +19,13 @@
     key
     ))
 
+(defn add-address-simple [address]
+  (let [key (gensym "address-current")
+        pair {key address}]
+    (swap! address-table conj pair)
+    key
+    ))
+
 (defn remove-address [key]
     (swap! address-table dissoc key)
   key)

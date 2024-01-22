@@ -41,7 +41,7 @@
 
 
 
-(defn op-goto [key this-class byte-code-inst]
+(defn op-goto [key byte-code-inst]
   ^{:doc "defines a goto to a specified address out of the address table "}
   ;; here is the goto target
   ;; int pc = bytecode.currentPc();
@@ -56,36 +56,47 @@
       (.addIndex byte-code-inst (- (.currentPc byte-code-inst) (+ pc 1)))
       byte-code-inst)))
 
-(defn block-invocation [byte-code-inst inner-method-name]
-  (let [start-stmt (.currentPc byte-code-inst)
-        clazz-for-name (env/retrieve-main-class)
-        dummy (.addInvokestatic clazz-for-name inner-method-name
-                                (defs/type-constants :voidType)
-                                nil)
-        end-stmt (.currentPc byte-code-inst)]
-    (- end-stmt start-stmt)))
+(defn lookup-switch-statement-size [byte-code-inst condition-count]
+  (let [pc (.currentPc byte-code-inst)
+        sz 8
+        sz (+ (if (not= (mod (+ pc 1) 4) 0)
+                (- 4 (mod (+ pc 1) 4))
+                8) sz)]
+    (+ sz (* 8 condition-count))))
 
-(defn buildup-blocks-for-switch [byte-code-inst block-params]
-  (loop [[ dummy param] block-params blocks-size 0
-         block-size (block-invocation byte-code-inst param)]
+(defn block-invocation [byte-code-inst inner-method-name return-address]
+  (let [clazz-for-name (env/retrieve-main-class)
+        key (env/add-address-simple return-address)]
+    (.addInvokestatic clazz-for-name inner-method-name
+                      (defs/type-constants :voidType)
+                      nil)
+    (op-goto key byte-code-inst)
+    return-address))
+
+(defn buildup-blocks-for-switch [byte-code-inst block-params return-address]
+  (loop [[dummy param] block-params blocks-size 0
+         block-size (block-invocation byte-code-inst param return-address)]
     (if (not= 0 (count block-params))
-    (recur (rest block-params)
-           (+ blocks-size block-size)
-           (block-invocation byte-code-inst param))
-    [block-size blocks-size])))
+      (recur (rest block-params)
+             (+ blocks-size block-size)
+             (block-invocation byte-code-inst param return-address))
+      [block-size blocks-size])))
 
 (defn lookup-switch [byte-code-inst block-params]
   (let [addr-before-blocks (.currentPc byte-code-inst)
+        count-cases (count block-params)
+        return-address (+ (lookup-switch-statement-size byte-code-inst count-cases)
+                          (.currentPc byte-code-inst) 1)
         [block-size size-of-blocks]
-        (buildup-blocks-for-switch byte-code-inst block-params)
-        addr-after-blocks (+ 1 (.currentPc byte-code-inst))]
+        (buildup-blocks-for-switch byte-code-inst block-params return-address)
+        ]
     (defs/type-constants :booleanType)
     (let [switch-op-code (Opcode/LOOKUPSWITCH)
-          count-cases (count block-params)]
+          ]
       (.addOpcode byte-code-inst switch-op-code)
       (.add byte-code-inst (+ addr-before-blocks 1))
       (.add byte-code-inst count-cases)
-      (loop [pair block-params  index 1
+      (loop [pair block-params index 1
              address (+ addr-before-blocks
                         (* index block-size) 1)
              ]

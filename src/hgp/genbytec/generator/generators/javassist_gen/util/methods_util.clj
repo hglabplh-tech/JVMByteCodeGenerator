@@ -20,24 +20,30 @@
      byte-code  (Bytecode. const-pool 0 0)]
     (code-gen-fun byte-code) byte-code) )
 
-(defn- compileReturn [byte-code ct-class]
+(defn new-byte-code []
+  (let
+    [[const-pool class-pool] (env/get-pools)
+     byte-code  (Bytecode. const-pool 0 0)]
+     byte-code) )
+
+(defn- compileReturn [byte-code-inst ct-class]
   (if (.isPrimitive ct-class)
     (do (let [pt (cast CtPrimitiveType ct-class)]
           (if (not (= pt (get defs/type-constants :voidType)))
-            (do (let [wrapper-name (.getWrapperName pt)]
-                  (.addCheckcast byte-code wrapper-name)
-                  (.addInvokevirtual byte-code wrapper-name
+            (do (let [meth-name (.getGetMethodName pt)]
+                  (.addCheckcast byte-code-inst meth-name)
+                  (.addInvokevirtual byte-code-inst meth-name
                                      (.getGetMethodName pt)
                                      (.getGetMehodDescriptor pt))
                   )
 
 
             ))
-          (.addOpcode byte-code (.getReturnOp pt))
+          (.addOpcode byte-code-inst (.getReturnOp pt))
           )
       )
-    (do (.addCheckcast byte-code ct-class)
-        (.addOpcode byte-code (Opcode/ARETURN))
+    (do (.addCheckcast byte-code-inst ct-class)
+        (.addOpcode byte-code-inst (Opcode/ARETURN))
       )))
 
 
@@ -64,3 +70,24 @@
           (if (< stacksize (+ stacksize2 2))
             (+ stacksize2 2)
             stacksize))))
+
+(defn add-invoke-meth-virtual [byte-code-inst theClazz]
+  (let [primitive (cast CtPrimitiveType theClazz)
+        methName (.getMethodName primitive)
+        methDescriptor (.getGetMethodDescriptor primitive)]
+    (.addInvokevirtual byte-code-inst primitive methName methDescriptor)
+    ))
+
+(defn add-invoke-meth-dynamic [byte-code-inst theClazz]
+  (let [primitive (cast CtPrimitiveType theClazz)
+        methName (.getMethodName primitive)
+        methDescriptor (.getGetMethodDescriptor primitive)]
+    (.addInvokedynamic byte-code-inst primitive methName methDescriptor)
+    ))
+
+(defn add-invoke-meth-static [byte-code-inst theClazz]
+  (let [primitive (cast CtPrimitiveType theClazz)
+        methName (.getMethodName primitive)
+        methDescriptor (.getGetMethodDescriptor primitive)]
+    (.addInvokestatic byte-code-inst primitive methName methDescriptor)
+    ))

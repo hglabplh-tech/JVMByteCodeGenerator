@@ -18,7 +18,7 @@
         ]
    [class-pool const-pool clazz]))
 
-(defn def-main-class []
+(defn retrieve-main-class []
   (let [class-pool (ClassPool/getDefault)
         main-class (.get class-pool "genbytecj.templates.MainClassTemplate")]
     main-class))

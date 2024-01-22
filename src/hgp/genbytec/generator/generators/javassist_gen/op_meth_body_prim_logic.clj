@@ -108,3 +108,15 @@
                                                   (* index block-size) 1)))
       )))
 
+(defn invoke-meth-static-byte-array-param [byte-code-inst class-name
+                                           byte-array-param
+                                           method-name ret-type-key]
+  (let [[const-pool class-pool] (env/get-pools)]
+  (.addInvokestatic byte-code-inst
+                    (.get class-pool
+                          class-name)
+                    method-name
+                    (get defs/type-constants ret-type-key)
+                    (type byte-array-param)
+                    )))
+

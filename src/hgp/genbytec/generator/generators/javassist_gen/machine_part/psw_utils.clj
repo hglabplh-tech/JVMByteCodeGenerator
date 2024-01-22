@@ -22,7 +22,21 @@
                    Bit | 32 | A | Addressing Mode 0=24 bit ; 1=31 bit
                    Bits | 33-63 | IA | Instruction address"}
 (def addr-mode-ec 0x01)
+
+;; define the cc-masks
+(def equal-mask 0x00)
+
+(def high-mask 0x08)
+
+
+(def low-mask 0x04)
+
+(def overflow-mask 0x0C)
+
 (def addr-mode-virt 0x00)
+
+
+
 (defn get-cc[value]
   (bit-and (aget value 2)  2r00001100) )
 (defn set-cc-equal [value]

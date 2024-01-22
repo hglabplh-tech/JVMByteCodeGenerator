@@ -4,6 +4,4 @@
   (:import (javassist.bytecode ConstPool)))
 
 (defn start-with-env []
-  (let [[class-pool-inst main-class] (env/retrieve-main-class)
-        const-pool-inst (ConstPool. (.getName main-class))]
-    (env/add-pools const-pool-inst class-pool-inst)))
+   )

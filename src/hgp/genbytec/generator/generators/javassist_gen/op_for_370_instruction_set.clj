@@ -22,6 +22,7 @@
     (swap! reg-next-op calculated-next)
     (prim-ops/op-goto reg-goto-target this-clazz byte-code-inst)
     ))
+
   (defn BCR-fun [byte-code-inst this-clazz mask reg-goto-target]
     (let [class-pool (ClassPool/getDefault)
           result (.addInvokestatic byte-code-inst
@@ -32,6 +33,8 @@
                                    nil
                                    )])
         )
+
+
   (defn CLR-fun [byte-code-inst this-clazz reg-value reg-value-comp]
         (let [op-code-comp (Opcode/LCMP)]
           (.addIload byte-code-inst reg-value)

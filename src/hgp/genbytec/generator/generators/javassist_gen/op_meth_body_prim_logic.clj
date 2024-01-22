@@ -64,6 +64,7 @@
                                 nil)
         end-stmt (.currentPc byte-code-inst)]
     (- end-stmt start-stmt)))
+
 (defn buildup-blocks-for-switch [byte-code-inst block-params]
   (loop [[ dummy param] block-params blocks-size 0
          block-size (block-invocation byte-code-inst param)]
@@ -84,7 +85,7 @@
       (.addOpcode byte-code-inst switch-op-code)
       (.add byte-code-inst (+ addr-before-blocks 1))
       (.add byte-code-inst count-cases)
-      (loop [pair block-params  index 0
+      (loop [pair block-params  index 1
              address (+ addr-before-blocks
                         (* index block-size) 1)
              ]

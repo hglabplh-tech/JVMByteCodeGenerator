@@ -11,19 +11,11 @@ import javassist.bytecode.ConstPool;
 
 import genbytecj.templates.MainClassTemplate;
 
+import static bytecinit.InitByteC.getByteCode;
+
 
 public class VMStatusUtil {
 
-    private static final ConstPool constPoolInst;
-    private static final Bytecode byteCodeInst;
-
-    static {
-
-        constPoolInst = new ConstPool(MainClassTemplate.class.getCanonicalName());
-        byteCodeInst = new Bytecode(constPoolInst, 0, 0);
-
-
-    }
 
     public static byte[] psw_status_word = new byte[8];
 
@@ -64,16 +56,16 @@ public class VMStatusUtil {
     private static final void loadStack(Integer cc_state) {
         switch (cc_state) {
             case 0x00:
-                byteCodeInst.addIload(0);
+                getByteCode().addIload(0);
                 break;
             case 0x04:
-                byteCodeInst.addIload(-1);
+                getByteCode().addIload(-1);
                 break;
             case 0x08:
-                byteCodeInst.addIload(1);
+                getByteCode().addIload(1);
                 break;
             case 0x0C:
-                byteCodeInst.addIload(12);
+                getByteCode().addIload(12);
                 break;
         }
 

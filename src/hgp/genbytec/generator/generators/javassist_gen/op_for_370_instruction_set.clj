@@ -72,7 +72,8 @@
     ))
 
 (defn AR-fun [byte-code-inst reg-no-one reg-no-two]
-  (let [reg-val-one (VM370Regs/getReg reg-no-one)
+  (let [
+        reg-val-one (VM370Regs/getReg reg-no-one)
         reg-val-two (VM370Regs/getReg reg-no-two)]
   (.addIload byte-code-inst reg-val-one)
   (.addIload byte-code-inst reg-val-two)
@@ -93,8 +94,9 @@
 
     ))
 
-(defn XR-fun byte-code-inst reg-no-one reg-no-two
-  (let [reg-val-one (VM370Regs/getReg reg-no-one)
+(defn XR-fun [byte-code-inst reg-no-one reg-no-two]
+  (let [base-reg-area (VM370Regs/getAllBaseRegs)
+        reg-val-one (VM370Regs/getReg reg-no-one)
         reg-val-two (VM370Regs/getReg reg-no-two)]
     (.addIload byte-code-inst reg-val-one)
     (.addIload byte-code-inst reg-val-two)

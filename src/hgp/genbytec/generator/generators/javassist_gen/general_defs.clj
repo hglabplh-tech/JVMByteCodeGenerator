@@ -19,6 +19,9 @@
    :volatile     (Modifier/VOLATILE)}
   )
 
+(defn get-modifier-const [key]
+  (get modifier-constants key))
+
 (def type-constants
   {:booleanType (CtClass/booleanType)
    :byteType    (CtClass/byteType)
@@ -31,3 +34,6 @@
    :shortType   (CtClass/shortType)
    :version     (CtClass/version)
    :voidType    (CtClass/voidType)})
+
+(defn get-type-const [key]
+  (get type-constants key))

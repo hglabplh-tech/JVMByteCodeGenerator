@@ -31,16 +31,13 @@ public class VSE370SvcAndMacros {
     public void svc83Allocate(Integer address, Integer size, CtClass type) throws NotFoundException { // this part
         // has to be definitely corrected
         CtClass  ctVMRegs = getClassPool().get(VM370Regs.class.getCanonicalName());
-        Integer [] registers = getAllBaseRegs();
         AdditionalWrappedOps.getIConstAsLocal(0, address);
         getByteCode().addNew(type);
-        getByteCode().addAstore(0);
-
         // make a generalized method out of this
         getByteCode().addGetstatic(ctVMRegs, "baseRegs", getAllBaseRegs().
                 getClass().getTypeName());
         getByteCode().addIndex(15); // the value has to be changed for real world
-        getByteCode().addIload(78);
+        getByteCode().addIload(0x00);
         getByteCode().addOpcode(Opcode.AALOAD);
 
 

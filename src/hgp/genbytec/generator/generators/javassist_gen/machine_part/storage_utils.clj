@@ -1,11 +1,17 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.machine-part.storage-utils
   (:require [hgp.genbytec.generator.generators.javassist-gen.general-defs :as gd]
-            [hgp.genbytec.generator.generators.javassist-gen.machine-part.register-utils :as ru]
+
             [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env])
   (:import (java.lang Object Class)
            (javassist ClassPool)
            (javassist.bytecode Bytecode)))
-
+(defn arr-copy [target source]
+  (let [arr-len (alength source)]
+    (loop [x (- arr-len 1)]
+      (aset target x (aget source x))
+      (recur (- x 1)))
+    target
+    ))
 (def short-type (gd/get-type-const :shortType))
 (def int-type (gd/get-type-const :intType))
 
@@ -58,5 +64,5 @@
       double-type (.Double source)
       byte-type (let [len (alength source)
                       new-arr (byte-array len)]
-                  (ru/arr-copy new-arr source))))
+                  (arr-copy new-arr source))))
 

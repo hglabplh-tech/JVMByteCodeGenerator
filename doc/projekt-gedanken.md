@@ -24,8 +24,8 @@ Hier meine leidigen und guten Erfahrungen damit.
 ## Der Zweck dieser Bibliothek 
 
 Die hier vorliegende Bibliothek hat den Zweck entweder die Logik eines beliebigen Assembler 
-oder einen AST (Compiler Hochsprache) in Java Bytecode zu übersetzen so dass das dadurch 
-resultierende Program auf der Java Virtual Machine(JVM) ab Java 8 lauffähig ist.
+oder einen AST (Compiler Hochsprache) in Java Bytecode zu übersetzen, so dass das dadurch 
+resultierende Programm auf der Java Virtual Machine(JVM) ab Java 8 lauffähig ist.
 
 Um das generieren zu vereinfachen verwende ich die Javassist Library, 
 welche auch einen Java Compiler enthält.Natürlich könnte man auch bei jeder Sprache, welche

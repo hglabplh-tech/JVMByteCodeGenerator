@@ -10,7 +10,7 @@ public class InitByteC {
 
     private static final ConstPool constPool = new ConstPool("genbytecj.templates.MainClassTemplate");
 
-    private static final Bytecode byteCode = new Bytecode(constPool, 0, 0);
+    public static final Bytecode byteCode = new Bytecode(constPool, 0, 0);
 
     public static ClassPool getClassPool() {
         return classPool;

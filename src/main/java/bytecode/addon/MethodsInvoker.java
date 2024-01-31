@@ -1,16 +1,13 @@
 package bytecode.addon;
 
-import clojure.lang.Tuple;
-import javassist.ClassPool;
 import javassist.CtClass;
-import javassist.bytecode.Opcode;
 
 import java.util.Iterator;
 import java.util.List;
 
 import static bytecinit.InitByteC.*;
 
-public class MethosInvoker {
+public class MethodsInvoker {
 
     public void pushParameters(List<Object> parmValues, CtClass... parameterTypes) {
         Iterator<Object> listIter = parmValues.iterator();

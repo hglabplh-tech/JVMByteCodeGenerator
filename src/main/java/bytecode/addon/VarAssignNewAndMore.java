@@ -80,8 +80,7 @@ public class VarAssignNewAndMore {
         getByteCode().addOpcode(Opcode.IINC);
         ClassFieldMethodHandling.putFieldValueOp(getReferenceType(ConstPool.CONST_Integer),
                 ClassFieldMethodHandling.genArrayIndexFieldName(ConstPool.CONST_Integer), CtClass.intType);
-        getByteCode().addOpcode(Opcode.ILOAD_0);
-        getByteCode().addOpcode(Opcode.RETURN);
+        getByteCode().addRet(0);
     }
 
     public static CtClass createClassForStorage() {

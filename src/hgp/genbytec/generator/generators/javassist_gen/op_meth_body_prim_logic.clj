@@ -1,8 +1,12 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.op-meth-body-prim-logic
-  (:require [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env]
-            [hgp.genbytec.generator.generators.javassist-gen.general-defs :as defs])
-  (:import (javassist.bytecode Opcode Bytecode ConstPool)
-           (javassist ClassPool CtClass))
+  (:require [clojure.java.io :as cio]
+            [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env]
+            [hgp.genbytec.generator.generators.javassist-gen.general-defs :as defs]
+            [hgp.genbytec.generator.generators.javassist-gen.machine-defs.opcodes :as opc])
+  (:import
+    (java.io DataInputStream File)
+    (javassist.bytecode Opcode Bytecode ConstPool)
+    (javassist ClassPool CtClass))
   )
 
 (defn new-byte-node [my-class]
@@ -14,8 +18,8 @@
 
 (defn op-if-icmpeq [byte-code-inst value comp-value key]
   ;; first build the stack
-  (.addIload byte-code-inst value)
-  (.addIload byte-code-inst comp-value)
+  (.addIconst byte-code-inst value)
+  (.addIconst byte-code-inst comp-value)
   (.addOpcode byte-code-inst (Opcode/IF_ICMPGE))
   (.add32bit byte-code-inst (env/get-address key)))
 
@@ -112,11 +116,39 @@
                                            byte-array-param
                                            method-name ret-type-key]
   (let [[const-pool class-pool] (env/get-pools)]
-  (.addInvokestatic byte-code-inst
-                    (.get class-pool
-                          class-name)
-                    method-name
-                    (get defs/type-constants ret-type-key)
-                    (type byte-array-param)
-                    )))
+    (.addInvokestatic byte-code-inst
+                      (.get class-pool
+                            class-name)
+                      method-name
+                      (get defs/type-constants ret-type-key)
+                      (type byte-array-param)
+                      )))
+
+
+(defn file-to-byte-array [file]
+  (let [result (byte-array (.length file))]
+    (with-open [in (DataInputStream. (cio/input-stream file))]
+      (.readFully in result))
+    result))
+(defn for-loop-with-body [byte-code-inst the-bytes value comp-value]
+  (let [address-before (.currentPc byte-code-inst)
+        loop-lab (gensym "for-loop-with-body")
+        goto-len (opc/get-opcode-len-of :goto)
+        lgoto-lab (gensym "lgoto-lab")
+        loop-start-lab (gensym "loop-start-lab")
+        goto-address
+        (env/add-address lgoto-lab
+                         (+ goto-len address-before (alength the-bytes)))
+        dummy
+        (env/add-address loop-start-lab
+                         (+ goto-len address-before ))]
+    (op-goto lgoto-lab byte-code-inst)
+    (for [x the-bytes
+          offset 0]
+      (do (.write byte-code-inst x) (+ offset 1)))
+    (.currentPc byte-code-inst)
+    (op-if-icmpeq byte-code-inst value comp-value loop-start-lab)
+    )
+
+  )
 

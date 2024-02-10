@@ -1,6 +1,7 @@
 package bytecode.addon;
 
 import javassist.CtClass;
+import javassist.bytecode.Opcode;
 
 import java.util.Iterator;
 import java.util.List;
@@ -9,7 +10,7 @@ import static bytecinit.InitByteC.*;
 
 public class MethodsInvoker {
 
-    public void pushParameters(List<Object> parmValues, CtClass... parameterTypes) {
+    public static  void pushParameters(List<Object> parmValues, CtClass... parameterTypes) {
         Iterator<Object> listIter = parmValues.iterator();
         for (CtClass type : parameterTypes) {
             Object parmValObj = null;
@@ -32,16 +33,16 @@ public class MethodsInvoker {
                 getByteCode().addLconst(((Long) parmValObj));
             } else if (type.equals(CtClass.shortType)) {
                 getByteCode().addIconst((Short) parmValObj);
-            } else {
-                CtClass internType = getClassPool().makeClass(type.getPackageName()); // reverence type
-                getByteCode().addAload(0); //TODO: must fix
+            } else
+                getByteCode().addNew(type);
+
             }
 
 
         }
-    }
 
-    public void popReturn(CtClass type, Integer fieldIndex) {
+
+    public static void popReturn(CtClass type, Integer fieldIndex) {
             if (type.equals(CtClass.intType)) {
                 byteCode.addIstore(fieldIndex);
             } else if (type.equals(CtClass.booleanType)) {
@@ -65,7 +66,7 @@ public class MethodsInvoker {
 
     }
 
-    public void funInvoke(CtClass target, String name,
+    public static void funInvoke(CtClass target, String name,
                           InvocationTypes callType, CtClass returnType,
                           List<Object> parmValues,
                           CtClass... parameterTypes) {
@@ -81,7 +82,7 @@ public class MethodsInvoker {
                     .addInvokeinterface(target, name,
                             returnType, parameterTypes, 1);
         }
-        popReturn(returnType, 1);
+        //popReturn(returnType, 1);
 
     }
 

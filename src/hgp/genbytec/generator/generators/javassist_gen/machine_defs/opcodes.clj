@@ -203,3 +203,14 @@
    :goto_w         [200 5]
    :jsr_w          [201 5]
    })
+
+(defn get-opcode-def [op-sym]
+  (get op-codes-def op-sym))
+
+(defn get-opcode-of [op-sym]
+  (let [opcode-def (get-opcode-def op-sym)]
+    (nth opcode-def 0)))
+
+(defn get-opcode-len-of [op-sym]
+  (let [opcode-def (get-opcode-def op-sym)]
+    (nth opcode-def 1)))

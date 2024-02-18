@@ -42,29 +42,7 @@ public class MethodsInvoker {
         }
 
 
-    public static void popReturn(CtClass type, Integer fieldIndex) {
-            if (type.equals(CtClass.intType)) {
-                byteCode.addIstore(fieldIndex);
-            } else if (type.equals(CtClass.booleanType)) {
-                byteCode.addIstore(fieldIndex);
-            } else if (type.equals(CtClass.byteType)) {
-                byteCode.addIstore(fieldIndex);
-            } else if (type.equals(CtClass.charType)) {
-                byteCode.addIstore(fieldIndex);
-            } else if (type.equals(CtClass.doubleType)) {
-                getByteCode().addDconst(fieldIndex);
-            } else if (type.equals(CtClass.floatType)) {
-                getByteCode().addFconst(fieldIndex);
-            } else if (type.equals(CtClass.longType)) {
-                getByteCode().addLstore(fieldIndex);
-            } else if (type.equals(CtClass.shortType)) {
-                getByteCode().addIstore(fieldIndex);
-            } else {
-                CtClass internType = getClassPool().makeClass(type.getPackageName()); // reverence type
-                getByteCode().addAstore(fieldIndex);
-            }
 
-    }
 
     public static void funInvoke(CtClass target, String name,
                           InvocationTypes callType, CtClass returnType,
@@ -82,7 +60,7 @@ public class MethodsInvoker {
                     .addInvokeinterface(target, name,
                             returnType, parameterTypes, 1);
         }
-        //popReturn(returnType, 1);
+       getByteCode().addReturn(target); // have to check the correctness
 
     }
 

@@ -16,12 +16,12 @@
    [log4j/log4j "1.2.17"]
    [org.javassist/javassist "3.25.0-GA"]
    [commons-cli/commons-cli "1.6.0"]]
-  :source-paths ["src"]
+  :source-paths ["src/clj"]
   :java-source-paths ["src/main/java"]                      ; Java source is stored separately.
   :test-paths ["test/clj"]
   :resource-paths ["resource"]
   :dev {:resource-paths "test/resource"}
-
+  :javac-options ["-Xlint:unchecked"]
   :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                     "resources/public/cljs-out" :target-path]
   :aot :all

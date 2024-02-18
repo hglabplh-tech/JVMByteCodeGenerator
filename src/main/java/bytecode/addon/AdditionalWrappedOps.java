@@ -1,7 +1,7 @@
 package bytecode.addon;
 
 import ass370.utils.VM370Regs;
-import genbytecj.templates.MainClassTemplate;
+
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -63,9 +63,10 @@ public class AdditionalWrappedOps {
     }
 
     public static void storeRegs(Integer register) {
-        try {
+        try { // TODO: have to review
             getByteCode().addIload(register);
             getRegisterArray();
+            getByteCode().addIload(register);
             getByteCode().addOpcode(Opcode.IASTORE);
         } catch (NotFoundException e) {
             throw new IllegalStateException(e.getMessage());

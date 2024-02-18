@@ -76,8 +76,7 @@ public class ClassFieldMethodHandling {
                 break;
         }
 
-        getByteCode().addOpcode(Opcode.ALOAD);
-        getByteCode().addIndex(index);
+        getByteCode().addAload(index);
         return index;
     }
 

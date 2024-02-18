@@ -4,12 +4,7 @@ import clojure.java.api.Clojure;
 import clojure.lang.IFn;
 
 
-import javassist.ClassPool;
-import javassist.NotFoundException;
-import javassist.bytecode.Bytecode;
-import javassist.bytecode.ConstPool;
 
-import genbytecj.templates.MainClassTemplate;
 
 import static bytecinit.InitByteC.getByteCode;
 
@@ -56,16 +51,16 @@ public class VMStatusUtil {
     private static final void loadStack(Integer cc_state) {
         switch (cc_state) {
             case 0x00:
-                getByteCode().addIload(0);
+                getByteCode().addIconst(0);
                 break;
             case 0x04:
-                getByteCode().addIload(-1);
+                getByteCode().addIconst(-1);
                 break;
             case 0x08:
-                getByteCode().addIload(1);
+                getByteCode().addIconst(1);
                 break;
             case 0x0C:
-                getByteCode().addIload(12);
+                getByteCode().addIconst(12);
                 break;
         }
 

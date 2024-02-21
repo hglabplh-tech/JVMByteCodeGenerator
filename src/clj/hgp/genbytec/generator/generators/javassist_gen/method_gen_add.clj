@@ -1,44 +1,113 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.method-gen-add
   (:require [hgp.genbytec.generator.generators.javassist-gen.general-defs :as defs]
-            [hgp.genbytec.generator.generators.javassist-gen.util.methods-util :as mu])
-  (:import (javassist ClassPool CtMethod CtNewMethod CtClass Modifier)))
-(def test-arr (make-array CtClass 3))
-(println test-arr)
+            [hgp.genbytec.generator.generators.javassist-gen.util.methods-util :as mu]
+            [hgp.genbytec.generator.generators.javassist-gen.acc-mod-defs :as acc])
+
+  ;; // import jasmin assmbler part for method generation
+  (:import (java.lang Class)
+           (javassist ClassPool CtMethod CtNewMethod CtClass Modifier)
+           (jasmin.utils.jas Method RuntimeConstants CodeAttr Insn)
+           (jasmin.utils.jas SignatureAttr ClassEnv ClassCP))
+  )
+
+;; signature calculation
+(def signatureTypeMap  {
+                         CtClass/booleanType "Z"
+                         CtClass/byteType    "B"
+                         CtClass/charType    "C"
+                         CtClass/shortType   "S"
+                         CtClass/intType     "I"
+                         CtClass/longType    "J"
+                         CtClass/floatType   "F"
+                         CtClass/doubleType  "D"
+                         CtClass/voidType    "V"
+
+                         })
+(defn array [type] (str "[" type) )
+(defn array-of-array [type] (str "[[" type) )
+;;L fully-qualified-class ;    fully-qualified-class
+;;[type type []
+;;Ljava/lang/Object;
+
+(defn build-signature  [params rettype]
+  (let [ret-type-id (get signatureTypeMap rettype)
+        ret-type-id (if (nil? ret-type-id)
+                      (str "L" rettype ";")
+                      ret-type-id
+                      )]
+  (loop [rest-of  params
+         result "("
+         ]
+      (if (empty? rest-of)
+        (str result ")" ret-type-id)
+        (let [parm (first rest-of)
+              value (get signatureTypeMap parm)
+              value (if (nil? value)
+                      (str "L" parm ";")
+                      value
+                      )
+            ]
+          (recur (rest rest-of)  (str result value) ))
+       ))))
 
 
-(def clazz-types {:int CtClass/intType})
+;;(println (build-signature [CtClass/intType CtClass/byteType "javassist/CtMethod" ] CtClass/longType))
+
+
+
+
+;;(def clazz-types {:int CtClass/intType})
 
 
 
 
 
-(defn create-static-meth [decl-clazz name parm-type-arr ret-type modifiers]
+(defn create-static-meth-javassist [decl-clazz name parm-type-arr ret-type modifiers]
   (let [stat-method (CtMethod. ret-type name parm-type-arr decl-clazz)
         meth-mods (mu/make-modifiers (conj modifiers (get defs/modifier-constants :static)))]
     (.setModifiers stat-method meth-mods)
     ;;(.setBody stat-method body)
     ))
 
-(defn create-public-meth [])
+(defn new-class-env [class-name access super-class & interfaces]
+  (let [class-cp (ClassCP. class-name)
+        class-env (ClassEnv.)]
+    (.setClassAccess class-env access)
+    (.setClass class-env class-cp)
+    (if super-class
+    (.setSuperClass class-env super-class))
+    (if interfaces
+        (.addInterface class-env interfaces))
+    ))
+(defn add-method-to-class [class-env method]
+  (let [[method-decl code-attr] method]
+  (.addMethod class-env method-decl)
+  )
+  )
+(defn create-general-method [modifier name parmDesc
+                             returnDesc description]
+  (let [new-method (Method. modifier
+                            name description)
+        signatureAttr
+        (SignatureAttr. (build-signature parmDesc returnDesc))
+        code-attr (CodeAttr.)
+        insn (Insn. RuntimeConstants/opc_aload 5 false)
+        ]
+    (.setCode new-method code-attr nil)
+    (.setSignature new-method signatureAttr)
+    [new-method code-attr]
+    ))
 
-(defn create-private-meth [])
+(defn add-code-to-method [method insn]
+  (let [[method-decl code-attr] method]
+    (.addInsn code-attr insn)
+    )
+  )
+(defn create-public-method [name parmDesc
+                            returnDesc description]
+  (create-general-method acc/public-method name parmDesc returnDesc description))
 
-(defn create-protected-meth [])
 
 
-;; add a method
-;;CtMethod getSalary = CtNewMethod.make
-;;(Modifier.PUBLIC, CtClass.doubleType, "getSalary", null, null,
-;;        "return salary;", ctClass)                ;
-;;ctClass.addMethod(getSalary);
-;;JavaDoc
-;;public static CtMethod make
-;;(String src,
-;;CtClass declaring,
-;;String delegateObj,
-;;String delegateMethod)
-;;throws CannotCompileException
-
-(defn add-method-to-given-class [])
 
 

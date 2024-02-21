@@ -35,6 +35,24 @@ public class Insn implements RuntimeConstants
       (opcNames[opc] + " cannot be used without more parameters");
   }
 
+  public Insn setOpc(int opc) {
+    this.opc = opc;
+    return this;
+  }
+
+  public Insn setOperand(InsnOperand operand) {
+    this.operand = operand;
+    return this;
+  }
+
+  public int opc() {
+    return opc;
+  }
+
+  public InsnOperand operand() {
+    return operand;
+  }
+
   private void check_short(int val, int opc) throws jasError
   {
     if (val > 32767 || val < -32768)

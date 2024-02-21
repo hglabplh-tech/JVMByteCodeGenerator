@@ -39,7 +39,5 @@ public class VSE370SvcAndMacros {
         getByteCode().addIndex(15); // the value has to be changed for real world
         getByteCode().addIload(0x00);
         getByteCode().addOpcode(Opcode.AALOAD);
-
-
     }
 }

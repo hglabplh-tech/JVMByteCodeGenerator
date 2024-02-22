@@ -1,6 +1,6 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.insn-simplified
   (:require [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env])
-  (:import (jasmin.utils.jas Insn RuntimeConstants CodeAttr LdcOperand Label)
+  (:import (jasmin.utils.jas Insn RuntimeConstants CodeAttr LdcOperand Label LabelOperand)
            (jasmin.utils.jas CPOperand ByteOperand OffsetOperand UnsignedByteOperand UnsignedByteWideOperand
                              RelativeOffsetOperand)))
 ;; CP code group

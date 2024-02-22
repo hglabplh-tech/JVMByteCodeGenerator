@@ -4,13 +4,29 @@
 (def const-pool (gensym "const-pool"))
 (def class-pool (gensym "class-pool"))
 (def address-table (atom {}))
-(def pool-table (atom {}) )
+(def pool-table (atom {}))
+(def label-table (atom {}))
+
+
+
+(defn add-label [key label]
+  (let [pair {key label}]
+    (swap! label-table conj pair)
+    pair))
+
+(defn remove-label [key]
+  (swap! label-table dissoc key)
+  key)
+
+(defn get-label [key]
+  (get @label-table key))
 
 
 (defn add-address [key address]
   (let [pair {key address}]
     (swap! address-table conj pair)
     pair))
+
 (defn add-current-address [byte-code-inst]
   (let [key (gensym "address-current")
         address (.currentPc byte-code-inst)

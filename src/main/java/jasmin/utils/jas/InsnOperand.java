@@ -26,9 +26,9 @@ class LabelOperand extends InsnOperand
   boolean wide;
   int ref;
 
-  LabelOperand(Label l, Insn source, int line)
+  public LabelOperand(Label l, Insn source, int line)
   { target = l; this.source = source; this.wide = false; this.ref = line; }
-  LabelOperand(Label l, Insn source, boolean wide, int line)
+  public LabelOperand(Label l, Insn source, boolean wide, int line)
   { target = l; this.source = source; this.wide = wide; this.ref = line; }
   int size(ClassEnv ce, CodeAttr code) { if (wide) return 4; else return 2; }
   void resolve(ClassEnv e) { return; }
@@ -51,7 +51,7 @@ class UnsignedByteOperand extends InsnOperand
 {
   int val;
 
-  UnsignedByteOperand(int n) { val = n; }
+  public UnsignedByteOperand(int n) { val = n; }
   int size(ClassEnv ce, CodeAttr code)  { return 1; }
   void write(ClassEnv e, CodeAttr ce, DataOutputStream out)
     throws IOException, jasError
@@ -73,7 +73,7 @@ class UnsignedByteWideOperand extends InsnOperand
   int val;
   boolean Wide;
 
-  UnsignedByteWideOperand(int n, boolean Wide)
+  public UnsignedByteWideOperand(int n, boolean Wide)
   {
     val = n;
     this.Wide = (Wide || val > 255);
@@ -104,7 +104,7 @@ class ByteOperand extends InsnOperand
 {
   int val;
 
-  ByteOperand(int n) { val = n; }
+  public ByteOperand(int n) { val = n; }
   int size(ClassEnv ce, CodeAttr code) { return 1; }
   void resolve(ClassEnv e) { return; }
   void write(ClassEnv e, CodeAttr ce, DataOutputStream out)
@@ -140,8 +140,8 @@ class CPOperand extends InsnOperand
   CP cpe;
   boolean wide;
   int size(ClassEnv ce, CodeAttr code) { if (wide) return 2; else return 1; }
-  CPOperand(CP cpe) { this.cpe = cpe; wide = true; }
-  CPOperand(CP cpe, boolean wide)
+  public CPOperand(CP cpe) { this.cpe = cpe; wide = true; }
+  public CPOperand(CP cpe, boolean wide)
   { this.cpe = cpe; this.wide = wide; }
   void resolve(ClassEnv e)
   { e.addCPItem(cpe); }
@@ -186,8 +186,8 @@ class LdcOperand extends InsnOperand implements RuntimeConstants
         return 1;
       }
   }
-  LdcOperand(Insn s, CP cpe) { source = s; this.cpe = cpe; wide = true; }
-  LdcOperand(Insn s, CP cpe, boolean wide)
+  public LdcOperand(Insn s, CP cpe) { source = s; this.cpe = cpe; wide = true; }
+  public LdcOperand(Insn s, CP cpe, boolean wide)
   { source = s; this.cpe = cpe; this.wide = wide; }
   void resolve(ClassEnv e)
   { e.addCPItem(cpe); }
@@ -405,11 +405,11 @@ class OffsetOperand extends InsnOperand {
   boolean wide;
   Insn parent;
 
-  OffsetOperand(Insn parent, int val) {
+  public OffsetOperand(Insn parent, int val) {
     this(parent, val, false);
   }
 
-  OffsetOperand(Insn parent, int val, boolean wide) {
+  public OffsetOperand(Insn parent, int val, boolean wide) {
     this.parent = parent;
     this.val = val;
     this.wide = wide;
@@ -435,11 +435,11 @@ class RelativeOffsetOperand extends InsnOperand {
   boolean wide;
   Insn parent;
 
-  RelativeOffsetOperand(Insn parent, int val) {
+  public RelativeOffsetOperand(Insn parent, int val) {
     this(parent, val, false);
   }
 
-  RelativeOffsetOperand(Insn parent, int val, boolean wide) {
+  public RelativeOffsetOperand(Insn parent, int val, boolean wide) {
     this.parent = parent;
     this.val = val;
     this.wide = wide;

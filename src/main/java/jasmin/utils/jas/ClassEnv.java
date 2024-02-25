@@ -33,6 +33,8 @@ public class ClassEnv implements RuntimeConstants
   EnclosingMethodAttr enclosing;
   DeprecatedAttr depr;
   InnerClassesAttr innerclasses;
+
+  BootstrapMethsAttr bootstrapMethsAttr = null;
   AnnotationAttr annVis, annInvis;
   Vector generic;
 
@@ -205,6 +207,9 @@ public class ClassEnv implements RuntimeConstants
       { depr.write(this, out); }
     if (annVis != null)
       { annVis.write(this, out); }
+    if (bootstrapMethsAttr != null) {
+      bootstrapMethsAttr.write(this, out);
+    }
     if (annInvis != null)
       { annInvis.write(this, out); }
     for (Enumeration gen=generic.elements(); gen.hasMoreElements(); )
@@ -281,6 +286,12 @@ public class ClassEnv implements RuntimeConstants
   { this.enclosing = new EnclosingMethodAttr(cls, mtd, dsc);
     this.enclosing.resolve(this); }
 
+  public void setBootstrapMethsAttr(BootstrapMethsAttr.BootstrapMethods[] methods) {
+    BootstrapMethsAttr bootstrap = new BootstrapMethsAttr(methods.length, methods);
+  }
+
+
+
 
   /**
    * Add an attribute specifying the signature of this class
@@ -346,7 +357,7 @@ public class ClassEnv implements RuntimeConstants
     methods.addElement(m);
   }
 
-  short getCPIndex(CP cp)
+  public short getCPIndex(CP cp)
     throws jasError
   {
     if (cpe_index == null)

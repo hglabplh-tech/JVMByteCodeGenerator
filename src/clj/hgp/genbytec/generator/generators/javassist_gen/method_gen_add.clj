@@ -1,5 +1,6 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.method-gen-add
-  (:require [hgp.genbytec.generator.generators.javassist-gen.general-defs :as defs]
+  (:require [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env]
+            [hgp.genbytec.generator.generators.javassist-gen.general-defs :as defs]
             [hgp.genbytec.generator.generators.javassist-gen.util.methods-util :as mu]
             [hgp.genbytec.generator.generators.javassist-gen.acc-mod-defs :as acc])
 
@@ -7,7 +8,7 @@
   (:import (java.lang Class)
            (javassist ClassPool CtMethod CtNewMethod CtClass Modifier)
            (jasmin.utils.jas Method RuntimeConstants CodeAttr Insn)
-           (jasmin.utils.jas SignatureAttr ClassEnv ClassCP))
+           (jasmin.utils.jas SignatureAttr ClassEnv ClassCP AsciiCP))
   )
 
 ;; signature calculation
@@ -86,23 +87,25 @@
   )
 (defn create-general-method [modifier name parmDesc
                              returnDesc description]
-  (let [new-method (Method. modifier
-                            name description)
+  (let [asciiName (AsciiCP. name)
+        asciiDescription (AsciiCP. description)
+        new-method (Method. modifier
+                            asciiName asciiDescription)
         signatureAttr
         (SignatureAttr. (build-signature parmDesc returnDesc))
         code-attr (CodeAttr.)
-        insn (Insn. RuntimeConstants/opc_aload 5 false)
         ]
     (.setCode new-method code-attr nil)
     (.setSignature new-method signatureAttr)
+    (env/add-method name  [new-method code-attr])
     [new-method code-attr]
     ))
 
-(defn add-code-to-method [method insn]
-  (let [[method-decl code-attr] method]
-    (.addInsn code-attr insn)
-    )
-  )
+(defn get-writer-to-meth [name]
+  (let [[meth code-attr] (env/get-method name)]
+    code-attr))
+
+
 (defn create-public-method [name parmDesc
                             returnDesc description]
   (create-general-method acc/public-method name parmDesc returnDesc description))

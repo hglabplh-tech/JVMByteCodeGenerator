@@ -24,6 +24,28 @@ public interface RuntimeConstants {
     public static final int CONSTANT_INTERFACEMETHOD = 11;
     public static final int CONSTANT_NAMEANDTYPE = 12;
 
+    int CONSTANT_METHODHANDLE = 15;
+
+    int CONSTANT_METHODTYPE = 16;
+
+    int CONSTANT_DYNAMIC = 17;
+
+    int CONSTANT_INVOKEDYNAMIC = 18;
+
+    /* reference kind constants*/
+
+    int REF_getField = 1;
+    int REF_getStatic = 2;
+    int REF_putField = 3;
+    int REF_putStatic = 4;
+    int REF_invokeVirtual = 5;
+    int REF_invokeStatic = 6;
+    int REF_invokeSpecial = 7;
+    int REF_newInvokeSpecial = 8;
+    int REF_invokeInterface = 9;
+
+
+
     // access flags
     public static final int ACC_PUBLIC       = 0x0001;
     public static final int ACC_PRIVATE      = 0x0002;

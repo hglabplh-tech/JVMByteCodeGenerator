@@ -116,7 +116,7 @@ class IntegerOperand extends InsnOperand
 {
   int val;
 
-  IntegerOperand(int n) { val = n; }
+  public IntegerOperand(int n) { val = n; }
   int size(ClassEnv ce, CodeAttr code) { return 4; }
   void resolve(ClassEnv e) { return; }
   void write(ClassEnv e, CodeAttr ce, DataOutputStream out)
@@ -127,7 +127,7 @@ class IntegerOperand extends InsnOperand
 class ShortOperand extends InsnOperand
 {
   int offset;
-  ShortOperand(int n) { offset = n; }
+  public ShortOperand(int n) { offset = n; }
   void resolve(ClassEnv e) { return; }
   int size(ClassEnv ce, CodeAttr code) { return 2; }
   void write(ClassEnv e, CodeAttr ce, DataOutputStream out)
@@ -212,7 +212,7 @@ class InvokeinterfaceOperand extends InsnOperand
   CP cpe;
   int nargs;
 
-  InvokeinterfaceOperand(CP cpe, int nargs)
+  public InvokeinterfaceOperand(CP cpe, int nargs)
   { this.cpe = cpe; this.nargs = nargs; }
 
   int size(ClassEnv ce, CodeAttr code) { return 4; }
@@ -235,7 +235,7 @@ class IincOperand extends InsnOperand
   int vindex, constt;
   boolean Wide;
 
-  IincOperand(int vindex, int constt, boolean Wide)
+  public IincOperand(int vindex, int constt, boolean Wide)
   {
     this.vindex = vindex;
     this.constt = constt;
@@ -280,7 +280,7 @@ class MultiarrayOperand extends InsnOperand
   CP cpe;
   int sz;
 
-  MultiarrayOperand(CP cpe, int sz)
+  public MultiarrayOperand(CP cpe, int sz)
   { this.cpe = cpe; this.sz = sz; }
   void resolve(ClassEnv e) { e.addCPItem(cpe); }
   int size(ClassEnv ce, CodeAttr code) { return 3; }
@@ -299,7 +299,7 @@ class LookupswitchOperand extends InsnOperand
   int match[];
   LabelOrOffset jmp[];
 
-  LookupswitchOperand(Insn s, LabelOrOffset def, int m[], LabelOrOffset j[])
+  public LookupswitchOperand(Insn s, LabelOrOffset def, int m[], LabelOrOffset j[])
   { dflt = def; jmp = j;  match = m;  source = s; }
 
   void resolve (ClassEnv e) { return; }
@@ -355,7 +355,7 @@ class TableswitchOperand extends InsnOperand
   LabelOrOffset jmp[];
   Insn source;
 
-  TableswitchOperand(Insn s,int min, int max, LabelOrOffset def,
+  public TableswitchOperand(Insn s,int min, int max, LabelOrOffset def,
                      LabelOrOffset j[])
   {
     this.min = min; this.max = max;

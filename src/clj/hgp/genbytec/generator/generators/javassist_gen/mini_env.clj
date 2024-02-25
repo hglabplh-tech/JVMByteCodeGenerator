@@ -21,6 +21,21 @@
 (defn get-label [key]
   (get @label-table key))
 
+(def method-table (atom {}))
+
+(defn add-method [key label]
+  (let [pair {key label}]
+    (swap! method-table conj pair)
+    pair))
+
+(defn remove-method [key]
+  (swap! method-table dissoc key)
+  key)
+
+(defn get-method [key]
+  (get @method-table key))
+
+
 
 (defn add-address [key address]
   (let [pair {key address}]

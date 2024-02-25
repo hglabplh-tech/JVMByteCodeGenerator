@@ -3,9 +3,19 @@
   (:import (jasmin.utils.jas Insn RuntimeConstants CodeAttr LdcOperand Label LabelOperand)
            (jasmin.utils.jas CPOperand ByteOperand OffsetOperand UnsignedByteOperand UnsignedByteWideOperand
                              RelativeOffsetOperand)))
+
+;; first of all there is a general functionality for bytecodes without written parameters
+
+(defn opcode-to-codeattr [code-attr op-code]
+  (let [insn (Insn. op-code)]
+    (.addInsn code-attr insn)
+    code-attr
+  ))
+
 ;; CP code group
 (defn putfield-to-codeattr [code-attr arg]
   (let [insn (Insn. RuntimeConstants/opc_putfield, arg)]
+    (.setOperand insn (CPOperand. arg))
     (.addInsn code-attr insn)
     code-attr))
 
@@ -471,15 +481,14 @@
 
 (defn insert-label [tag]
   (let [label (Label. tag)
-        key (gensym tag)]
+        key tag]
     (env/add-label key label)
     [key label]))
 
 (defn get-the-label [insert-result]
-  (let [[kay
-         label] insert-label])
+  (let [[key     label] insert-label]
   (env/get-label key)
-  )
+  ))
 
 (defn lab-jsr [code-attr key lineNum]
   (let [target (env/get-label key)

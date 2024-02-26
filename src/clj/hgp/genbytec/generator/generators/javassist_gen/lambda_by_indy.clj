@@ -37,7 +37,7 @@
         bootstrap-meth (BootstrapMethsAttr/createBootstrapMethod meth-handle-idx 0)
         bootstrap-meths-attr (BootstrapMethsAttr. (alength [bootstrap-meth] ) [bootstrap-meth])
         invoke-dynamic-cp  (InvokeDynamicCP. 0 name signature)
-        temp (.addCPItem invoke-dynamic-cp)
-        inv-dyn-idx (.getCPIndex invoke-dynamic-cp)]
+        temp (.addCPItem class-env invoke-dynamic-cp)
+        inv-dyn-idx (.getCPIndex class-env invoke-dynamic-cp)]
     (insn/invoke-dyn-to-codeattr code-attr invoke-dynamic-cp)
     ))

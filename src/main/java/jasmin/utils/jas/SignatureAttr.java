@@ -30,8 +30,7 @@ public class SignatureAttr
    * @param signature CP to be associated as the signature or the attribute
    * @see ClassEnv#setSignature
    */
-  public SignatureAttr(CP signature)
-  { this.signature = signature; }
+
 
   public String signatureVal() {
     return ((AsciiCP)this.signature).val();

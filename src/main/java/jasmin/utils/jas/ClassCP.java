@@ -15,6 +15,8 @@ public class ClassCP extends CP implements RuntimeConstants
 {
   AsciiCP name;
 
+  String strName;
+
   /**
    * @param name Name of the class
    */
@@ -22,6 +24,15 @@ public class ClassCP extends CP implements RuntimeConstants
   {
     uniq = ("CLASS: #$%^#$" + name).intern();
     this.name = new AsciiCP(name);
+    strName = name;
+  }
+
+  public AsciiCP name() {
+    return name;
+  }
+
+  public String strName() {
+    return strName;
   }
 
   void resolve(ClassEnv e)

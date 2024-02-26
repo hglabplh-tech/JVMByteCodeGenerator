@@ -33,6 +33,10 @@ public class SignatureAttr
   public SignatureAttr(CP signature)
   { this.signature = signature; }
 
+  public String signatureVal() {
+    return ((AsciiCP)this.signature).val();
+  }
+
   void resolve(ClassEnv e)
   { e.addCPItem(attr); e.addCPItem(signature); }
 

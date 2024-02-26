@@ -28,7 +28,7 @@ public class MethodCP extends CP implements RuntimeConstants
     nt = new NameTypeCP(varname, sig);
   }
 
-  void resolve(ClassEnv e)
+  public void resolve(ClassEnv e)
   {
     e.addCPItem(clazz);
     e.addCPItem(nt);

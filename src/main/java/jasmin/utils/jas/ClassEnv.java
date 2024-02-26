@@ -59,8 +59,14 @@ public class ClassEnv implements RuntimeConstants
    * @param name CPE representing name for class. (This is usually
    * a ClassCP)
    */
-  public void setClass(CP name)
+  public void setClassCP(CP name)
   {  this_class = name; addCPItem(name); }
+
+
+
+  public CP getClassCP()
+  {  return this_class; }
+
   /**
    * Define this class to have this superclass
    * @param name CPE representing name for class. (This is usually
@@ -190,6 +196,9 @@ public class ClassEnv implements RuntimeConstants
       { numExtra++; }
     if (annInvis != null)
       { numExtra++; }
+    if (bootstrapMethsAttr != null) {
+      numExtra++;
+    }
     numExtra += generic.size();
 
     out.writeShort(numExtra);
@@ -286,7 +295,7 @@ public class ClassEnv implements RuntimeConstants
   { this.enclosing = new EnclosingMethodAttr(cls, mtd, dsc);
     this.enclosing.resolve(this); }
 
-  public void setBootstrapMethsAttr(BootstrapMethsAttr.BootstrapMethods[] methods) {
+  public void setBootstrapMethsAttr(BootstrapMethsAttr.BootstrapMethod[] methods) {
     BootstrapMethsAttr bootstrap = new BootstrapMethsAttr(methods.length, methods);
   }
 

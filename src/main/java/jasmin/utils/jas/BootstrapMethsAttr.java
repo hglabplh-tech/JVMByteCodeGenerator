@@ -20,17 +20,21 @@ public class BootstrapMethsAttr {
 
     short numBootstrapMeths;
 
-    BootstrapMethods[] bootstrapMeths;
+    BootstrapMethod[] bootstrapMeths;
     static final CP attr = new AsciiCP("BootstrapMethods");
 
     public BootstrapMethsAttr(short numBootstrapMeths) {
         this.numBootstrapMeths = numBootstrapMeths;
-        this.bootstrapMeths = new BootstrapMethods[numBootstrapMeths];
+        this.bootstrapMeths = new BootstrapMethod[numBootstrapMeths];
     }
 
-    public BootstrapMethsAttr(int numBootstrapMeths, BootstrapMethods[] bootstrapMeths) {
+    public BootstrapMethsAttr(int numBootstrapMeths, BootstrapMethod[] bootstrapMeths) {
         this.numBootstrapMeths = (short) numBootstrapMeths;
         this.bootstrapMeths = bootstrapMeths;
+    }
+
+    public short attributeNameIndex() {
+        return attributeNameIndex;
     }
 
     void resolve(ClassEnv e) {
@@ -50,19 +54,23 @@ public class BootstrapMethsAttr {
         //ann.write(e, out);
     }
 
+    public static BootstrapMethod createBootstrapMethod(short bootstrapMethodRef, short numBootstrapArguments) {
+        return new BootstrapMethod(bootstrapMethodRef, numBootstrapArguments);
+    }
 
-    public static class BootstrapMethods {
+
+    public static class BootstrapMethod {
         short bootstrapMethodRef;
         short numBootstrapArguments;
         short[] bootstrap_arguments;
 
-        public BootstrapMethods(short bootstrapMethodRef, short numBootstrapArguments) {
-            this.bootstrapMethodRef = bootstrapMethodRef;
-            this.numBootstrapArguments = numBootstrapArguments;
-            this.bootstrap_arguments = new short[numBootstrapArguments];
+        public BootstrapMethod(short bootstrapMethodRef, short numBootstrapArguments) {
+            this(bootstrapMethodRef,
+            numBootstrapArguments,
+            new short[numBootstrapArguments]);
         }
 
-        public BootstrapMethods(short bootstrapMethodRef, short numBootstrapArguments, short[] bootstrap_arguments) {
+        public BootstrapMethod(short bootstrapMethodRef, short numBootstrapArguments, short[] bootstrap_arguments) {
             this.bootstrapMethodRef = bootstrapMethodRef;
             this.numBootstrapArguments = numBootstrapArguments;
             this.bootstrap_arguments = bootstrap_arguments;

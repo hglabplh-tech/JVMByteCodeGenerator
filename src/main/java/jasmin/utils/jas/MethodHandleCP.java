@@ -17,7 +17,16 @@ public class MethodHandleCP extends CP implements RuntimeConstants {
     }
     @Override
     void resolve(ClassEnv e) {
+        e.addCPItem(this);
+    }
 
+    public int cpIndex(ClassEnv e)  {
+        resolve(e);
+        try {
+            return e.getCPIndex(this);
+        } catch (jasError ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

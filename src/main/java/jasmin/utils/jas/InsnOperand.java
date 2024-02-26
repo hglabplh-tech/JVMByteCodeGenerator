@@ -215,6 +215,9 @@ class InvokeinterfaceOperand extends InsnOperand
   public InvokeinterfaceOperand(CP cpe, int nargs)
   { this.cpe = cpe; this.nargs = nargs; }
 
+  public void InvokeDynamicOperand(CP cpe, int nargs)
+  { this.cpe = cpe; this.nargs = nargs; }
+
   int size(ClassEnv ce, CodeAttr code) { return 4; }
 
   void resolve(ClassEnv e)
@@ -226,6 +229,27 @@ class InvokeinterfaceOperand extends InsnOperand
     out.writeShort(e.getCPIndex(cpe));
     out.writeByte((byte) (0xff & nargs));
     out.writeByte(0);
+  }
+}
+
+class InvokeDynamicOperand extends InsnOperand {
+
+  InvokeDynamicCP cpe;
+  public InvokeDynamicOperand(InvokeDynamicCP cpe)
+  { this.cpe = cpe; }
+  @Override
+  void write(ClassEnv e, CodeAttr ce, DataOutputStream out) throws IOException, jasError {
+
+  }
+
+  @Override
+  int size(ClassEnv e, CodeAttr code) throws jasError {
+    return 0;
+  }
+
+  @Override
+  void resolve(ClassEnv e) {
+
   }
 }
 

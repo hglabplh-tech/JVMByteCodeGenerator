@@ -13,11 +13,18 @@ import java.io.IOException;
 
 public class AsciiCP extends CP implements RuntimeConstants
 {
+  String val;
   /**
    * @param s Name of the ascii constant pool entry
    */
   public AsciiCP(String s)
-  { uniq = s.intern(); }
+  { uniq = s.intern();
+  val = s;}
+
+  public String val() {
+    return val;
+  }
+
   void resolve(ClassEnv e)
   { return; }
 

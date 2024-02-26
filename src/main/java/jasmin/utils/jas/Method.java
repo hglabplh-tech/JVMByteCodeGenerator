@@ -51,8 +51,15 @@ public class Method
   public void setSignature(SignatureAttr sig)
   { this.sig = sig; }
 
+  public SignatureAttr getSignatureAttr()
+  { return this.sig;}
+
   public void setDeprecated(DeprecatedAttr depr)
   { this.depr = depr; }
+
+  public String name() {
+    return ((AsciiCP)this.name).val();
+  }
 
   /**
    * Add a generic attribute to the method. A generic attribute
@@ -103,7 +110,15 @@ public class Method
   }
 
 
-  void resolve(ClassEnv e)
+ public int getMyCPIndex(ClassEnv e) {
+    this.resolve(e);
+     try {
+         return e.getCPIndex(name);
+     } catch (jasError ex) {
+         throw new RuntimeException(ex);
+     }
+ }
+  public void resolve(ClassEnv e)
   {
     e.addCPItem(name);
     e.addCPItem(desc);

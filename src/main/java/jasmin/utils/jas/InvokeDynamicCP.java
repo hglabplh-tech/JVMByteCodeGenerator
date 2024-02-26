@@ -8,7 +8,7 @@ public class InvokeDynamicCP extends CP implements RuntimeConstants {
     private final  short bootstrap;
     NameTypeCP nt;
     public InvokeDynamicCP(short bootstrap, String varname, String sig) {
-        uniq = bootstrap + "&%$91&" + varname + "*(012$" + sig;
+        uniq = bootstrap + "vokeDyn::&%$91&" + varname + "*(012$" + sig;
         this.bootstrap = bootstrap;
         this.nt = new NameTypeCP(varname, sig);
 

@@ -126,7 +126,7 @@ public class ClassFile {
     //
     void setClass(String name, short acc) {
         class_name = name;
-        class_env.setClass(new ClassCP(name));
+        class_env.setClassCP(new ClassCP(name));
         class_env.setClassAccess(acc);
         class_header = true;
     }

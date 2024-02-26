@@ -23,16 +23,16 @@
 
 (def method-table (atom {}))
 
-(defn add-method [key label]
+(defn add-meth [key label]
   (let [pair {key label}]
     (swap! method-table conj pair)
     pair))
 
-(defn remove-method [key]
+(defn remove-meth [key]
   (swap! method-table dissoc key)
   key)
 
-(defn get-method [key]
+(defn get-meth [key]
   (get @method-table key))
 
 

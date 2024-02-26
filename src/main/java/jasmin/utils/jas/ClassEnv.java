@@ -24,6 +24,7 @@ public class ClassEnv implements RuntimeConstants
   CP this_class, super_class;
   short class_access;
   Hashtable cpe, cpe_index;
+  Integer tempIndex = 0;
   Vector interfaces;
   Vector vars;
   Vector methods;
@@ -238,7 +239,7 @@ public class ClassEnv implements RuntimeConstants
    * @param cp Item to be added to the class
    */
 
-  public void addCPItem(CP cp)
+  public Integer addCPItem(CP cp)
   {
     String uniq = cp.getUniq();
     CP intern;
@@ -251,6 +252,20 @@ public class ClassEnv implements RuntimeConstants
 				// which it depends on
         cp.resolve(this);
       }
+    return tempIndex++;
+  }
+
+  public Integer calcCPIndex(CP cp) throws jasError {
+    int curidx = 1;
+    for (Enumeration e = cpe.elements(); e.hasMoreElements();)
+    {
+      CP tmp = (CP)(e.nextElement());
+      if (tmp.equals(cp)) {
+        return curidx;
+      }
+      curidx++;
+    }
+    throw new jasError("Indx not found for CP Item");
   }
 
   /**
@@ -295,7 +310,7 @@ public class ClassEnv implements RuntimeConstants
   { this.enclosing = new EnclosingMethodAttr(cls, mtd, dsc);
     this.enclosing.resolve(this); }
 
-  public void setBootstrapMethsAttr(BootstrapMethsAttr.BootstrapMethod[] methods) {
+  public void setBootstrapMethsAttr(BootstrapMethod[] methods) {
     BootstrapMethsAttr bootstrap = new BootstrapMethsAttr(methods.length, methods);
   }
 
@@ -369,8 +384,13 @@ public class ClassEnv implements RuntimeConstants
   public short getCPIndex(CP cp)
     throws jasError
   {
-    if (cpe_index == null)
-      throw new jasError("Internal error: CPE index has not been generated");
+    cp.resolve(this);
+    if (cpe_index == null) {
+      jasError ex = new jasError("Internal error: CPE index has not been generated");
+      System.err.println(cp);
+      throw ex;
+    }
+
 
     Integer idx = (Integer)(cpe_index.get(cp.getUniq()));
     if (idx == null)

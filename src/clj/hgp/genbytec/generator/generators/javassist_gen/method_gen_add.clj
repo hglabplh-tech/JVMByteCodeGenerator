@@ -5,7 +5,7 @@
             [hgp.genbytec.generator.generators.javassist-gen.util.methods-util :as mu])
 
   ;; // import jasmin assmbler part for method generation
-  (:import (jasmin.utils.jas AsciiCP ClassCP ClassEnv)
+  (:import (jasmin.utils.jas AsciiCP ClassCP ClassEnv NameTypeCP)
            (jasmin.utils.jas CodeAttr Method MethodCP SignatureAttr)
            (javassist CtClass CtMethod))
   )
@@ -51,45 +51,27 @@
         ))))
 
 
-;;(println (build-signature [CtClass/intType CtClass/byteType "javassist/CtMethod" ] CtClass/longType))
 
 
-
-
-;;(def clazz-types {:int CtClass/intType})
-
-
-
-
-
-(defn create-static-meth-javassist [decl-clazz name parm-type-arr ret-type modifiers]
-  (let [stat-method (CtMethod. ret-type name parm-type-arr decl-clazz)
-        meth-mods (mu/make-modifiers (conj modifiers (get defs/modifier-constants :static)))]
-    (.setModifiers stat-method meth-mods)
-    ;;(.setBody stat-method body)
-    ))
-
-(defn new-class-env [class-name access super-class & interfaces]
+(defn new-class-env [class-name access  & addons]
   (let [class-cp (ClassCP. class-name)
         class-env (ClassEnv.)]
     (.setClassAccess class-env access)
     (.setClassCP class-env class-cp)
-    (if (not (nil? super-class))
-      (.setSuperClass class-env super-class))
+    class-env))
 
-    ))
+
 (defn add-method-to-class [class-env method]
   (let [[method-decl code-attr] method
         class-CP (.getClassCP class-env)
-        meth-CP (MethodCP. (.strName method-decl class-CP)
+        meth-CP (MethodCP. (.strName class-CP)
                            (.name method-decl)
                            (.signatureVal
-                             (.getSignatureAttr method)))]
-    (.addCPItem class-env meth-CP)
+                             (.getSignatureAttr method-decl)))]
     (.addMethod class-env method-decl)
-    [(.getCPIndex class-env meth-CP) meth-CP]
-    )
-  )
+    (.addCPItem class-env meth-CP)
+    [(.calcCPIndex class-env  meth-CP) meth-CP]
+    ))
 (defn create-general-method [modifier name parmDesc
                              returnDesc]
   (let [asciiName (AsciiCP. name)

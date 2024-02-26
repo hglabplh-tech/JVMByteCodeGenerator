@@ -2,21 +2,18 @@
   (:require [hgp.genbytec.generator.generators.javassist-gen.method-gen-add :as  gmeth]
             [hgp.genbytec.generator.generators.javassist-gen.tokens :as tok]
             [hgp.genbytec.generator.generators.javassist-gen.insn-simplified :as insn]
+            [hgp.genbytec.generator.generators.javassist-gen.parse-thing :as parse]
             [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env])
   (:import (javassist ClassPool CtMethod CtNewMethod CtClass Modifier)
-           (jasmin.utils.jas InvokeDynamicCP MethodHandleCP RuntimeConstants BootstrapMethsAttr ClassEnv)))
+           (java.lang Object)
+           (jasmin.utils.jas InvokeDynamicCP MethodHandleCP RuntimeConstants BootstrapMethsAttr BootstrapMethod ClassEnv)))
 
 ;;(def class-env (gmeth/new-class-env "LambdaClass" RuntimeConstants/ACC_PUBLIC nil))
-(defn parse [fun-def]
-  (let [returnType (get fun-def :returnType)
-        name (get fun-def :lambda)
-        paramList (get fun-def :paramList)]
-    [name returnType paramList]
-    ))
+
 
 (defn gen-method [class-env fun-def]
-  (let [[name returnType paramList] (parse fun-def)
-        method (gmeth/create-public-static-method name paramList returnType)
+  (let [[name return-type param-list] (parse/parse fun-def)
+        method (gmeth/create-public-static-method name param-list return-type)
         code-attr (gmeth/get-writer-to-meth name)
         result (gmeth/add-method-to-class class-env method)]
 
@@ -28,16 +25,28 @@
   (MethodHandleCP. ref-kind ref-index))
 
 (defn really-invoke-dyn [class-env add-meth-result fun-def]
-  (let [[name returnType paramList] (parse fun-def)
-        signature (gmeth/build-signature paramList returnType)
+  (let [[name return-type param-list] (parse/parse fun-def)
+        signature (gmeth/build-signature param-list return-type)
         [result code-attr] add-meth-result
         [meth-ref-idx meth-cp] result
         meth-handle-cp (new-meth-handle-cp RuntimeConstants/REF_invokeStatic meth-ref-idx)
         meth-handle-idx (.cpIndex meth-handle-cp class-env)
-        bootstrap-meth (BootstrapMethsAttr/createBootstrapMethod meth-handle-idx 0)
-        bootstrap-meths-attr (BootstrapMethsAttr. (alength [bootstrap-meth] ) [bootstrap-meth])
+        bootstrap-meth-arr (BootstrapMethsAttr/createBootstrapMethod meth-handle-idx 0)
+        array-size (alength bootstrap-meth-arr)
+        bootstrap-meths-attr (BootstrapMethsAttr.  array-size bootstrap-meth-arr)
         invoke-dynamic-cp  (InvokeDynamicCP. 0 name signature)
         temp (.addCPItem class-env invoke-dynamic-cp)
-        inv-dyn-idx (.getCPIndex class-env invoke-dynamic-cp)]
+        inv-dyn-idx (.calcCPIndex class-env invoke-dynamic-cp)]
     (insn/invoke-dyn-to-codeattr code-attr invoke-dynamic-cp)
     ))
+
+(def test-expr {:returnType :void
+                :lambda     "lambdaFun"
+                :paramList  [:any :any :any :any :long]})
+
+(def cenvironment (gmeth/new-class-env "CompileClass" RuntimeConstants/ACC_PUBLIC) )
+(def code-res (really-invoke-dyn cenvironment (gen-method
+                                                cenvironment
+                                                test-expr) test-expr))
+
+(println code-res)

@@ -28,9 +28,9 @@ public class BootstrapMethsAttr {
         this.bootstrapMeths = new BootstrapMethod[numBootstrapMeths];
     }
 
-    public BootstrapMethsAttr(int numBootstrapMeths, BootstrapMethod[] bootstrapMeths) {
+    public BootstrapMethsAttr(int numBootstrapMeths, Object[] bootstrapMeths) {
         this.numBootstrapMeths = (short) numBootstrapMeths;
-        this.bootstrapMeths = bootstrapMeths;
+        this.bootstrapMeths = (BootstrapMethod[]) bootstrapMeths;
     }
 
     public short attributeNameIndex() {
@@ -54,27 +54,10 @@ public class BootstrapMethsAttr {
         //ann.write(e, out);
     }
 
-    public static BootstrapMethod createBootstrapMethod(short bootstrapMethodRef, short numBootstrapArguments) {
-        return new BootstrapMethod(bootstrapMethodRef, numBootstrapArguments);
-    }
-
-
-    public static class BootstrapMethod {
-        short bootstrapMethodRef;
-        short numBootstrapArguments;
-        short[] bootstrap_arguments;
-
-        public BootstrapMethod(short bootstrapMethodRef, short numBootstrapArguments) {
-            this(bootstrapMethodRef,
-            numBootstrapArguments,
-            new short[numBootstrapArguments]);
-        }
-
-        public BootstrapMethod(short bootstrapMethodRef, short numBootstrapArguments, short[] bootstrap_arguments) {
-            this.bootstrapMethodRef = bootstrapMethodRef;
-            this.numBootstrapArguments = numBootstrapArguments;
-            this.bootstrap_arguments = bootstrap_arguments;
-        }
+    public static BootstrapMethod[] createBootstrapMethod(short bootstrapMethodRef, short numBootstrapArguments) {
+        BootstrapMethod[] array = new BootstrapMethod[1];
+        array[0]  = new BootstrapMethod(bootstrapMethodRef, numBootstrapArguments);
+        return array;
     }
 
 

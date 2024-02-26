@@ -24,6 +24,7 @@ package jasmin.utils.jas;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 public abstract class CP
 {
@@ -35,4 +36,17 @@ public abstract class CP
 
   abstract void write(ClassEnv e, DataOutputStream out)
    throws IOException, jasError;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    CP cp = (CP) o;
+    return Objects.equals(uniq, cp.uniq);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(uniq);
+  }
 }

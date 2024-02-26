@@ -23,7 +23,7 @@ public class MethodHandleCP extends CP implements RuntimeConstants {
     public int cpIndex(ClassEnv e)  {
         resolve(e);
         try {
-            return e.getCPIndex(this);
+            return e.calcCPIndex(this);
         } catch (jasError ex) {
             throw new RuntimeException(ex);
         }

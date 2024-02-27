@@ -1,12 +1,9 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.lambda-by-indy
-  (:require [hgp.genbytec.generator.generators.javassist-gen.method-gen-add :as  gmeth]
-            [hgp.genbytec.generator.generators.javassist-gen.tokens :as tok]
-            [hgp.genbytec.generator.generators.javassist-gen.insn-simplified :as insn]
-            [hgp.genbytec.generator.generators.javassist-gen.parse-thing :as parse]
-            [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env])
-  (:import (javassist ClassPool CtMethod CtNewMethod CtClass Modifier)
-           (java.lang Object)
-           (jasmin.utils.jas InvokeDynamicCP MethodHandleCP RuntimeConstants BootstrapMethsAttr BootstrapMethod ClassEnv)))
+  (:require [hgp.genbytec.generator.generators.javassist-gen.insn-simplified :as insn]
+            [hgp.genbytec.generator.generators.javassist-gen.method-gen-add :as gmeth]
+            [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env]
+            [hgp.genbytec.generator.generators.javassist-gen.parse-thing :as parse])
+  (:import (jasmin.utils.jas BootstrapMethsAttr InvokeDynamicCP MethodHandleCP RuntimeConstants)))
 
 ;;(def class-env (gmeth/new-class-env "LambdaClass" RuntimeConstants/ACC_PUBLIC nil))
 
@@ -37,7 +34,7 @@
         invoke-dynamic-cp  (InvokeDynamicCP. 0 name signature)
         temp (.addCPItem class-env invoke-dynamic-cp)
         inv-dyn-idx (.calcCPIndex class-env invoke-dynamic-cp)]
-    (insn/invoke-dyn-to-codeattr code-attr invoke-dynamic-cp)
+    (env/add-address name (insn/invoke-dyn-to-codeattr code-attr invoke-dynamic-cp))
     ))
 
 (def test-expr {:returnType :void

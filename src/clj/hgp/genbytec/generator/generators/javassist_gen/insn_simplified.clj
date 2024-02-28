@@ -1,6 +1,7 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.insn-simplified
   (:require [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env])
-  (:import (jasmin.utils.jas Insn Label LabelOperand RuntimeConstants)
+  (:import (java.lang Boolean)
+           (jasmin.utils.jas Insn Label LabelOperand RuntimeConstants)
            (jasmin.utils.jas RelativeOffsetOperand)))
 
 ;; first of all there is a general functionality for bytecodes without written parameters
@@ -9,7 +10,13 @@
   (let [insn (Insn. op-code)]
     (.addInsn code-attr insn)
     code-attr
-  ))
+    ))
+
+(defn index-to-code-attr [code-attr index]
+  (let [insn (Insn. RuntimeConstants/opc_nop)]
+    (.addIndex insn index)
+    (.addInsn code-attr insn)
+    ))
 
 ;; CP code group
 (defn putfield-to-codeattr [code-attr arg]
@@ -273,36 +280,31 @@
     ))
 
 (defn ret-to-code-attr [code-attr value]
-  (let [insn (Insn. RuntimeConstants/opc_ret value)]
-
+  (let [insn (Insn. RuntimeConstants/opc_ret value Boolean/TRUE)]
     (.addInsn code-attr insn)
     code-attr
     ))
 
 (defn iload-to-code-attr [code-attr value]
-  (let [insn (Insn. RuntimeConstants/opc_iload value)]
-
+  (let [insn (Insn. RuntimeConstants/opc_iload value Boolean/TRUE)]
     (.addInsn code-attr insn)
     code-attr
     ))
 
 (defn lload-to-code-attr [code-attr value]
   (let [insn (Insn. RuntimeConstants/opc_lload value)]
-
     (.addInsn code-attr insn)
     code-attr
     ))
 
 (defn fload-to-code-attr [code-attr value]
   (let [insn (Insn. RuntimeConstants/opc_fload value)]
-
     (.addInsn code-attr insn)
     code-attr
     ))
 
 (defn dload-to-code-attr [code-attr value]
   (let [insn (Insn. RuntimeConstants/opc_dload value)]
-
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -316,7 +318,6 @@
 
 (defn istore-to-code-attr [code-attr value]
   (let [insn (Insn. RuntimeConstants/opc_istore value)]
-
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -342,7 +343,7 @@
     code-attr
     ))
 
-(defn estore-to-code-attr [code-attr value]
+(defn astore-to-code-attr [code-attr value]
   (let [insn (Insn. RuntimeConstants/opc_astore value)]
 
     (.addInsn code-attr insn)
@@ -484,14 +485,14 @@
     [key label]))
 
 (defn get-the-label [insert-result]
-  (let [[key     label] insert-label]
-  (env/get-label key)
-  ))
+  (let [[key label] insert-label]
+    (env/get-label key)
+    ))
 
 (defn lab-jsr [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_jsr target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -499,15 +500,15 @@
 (defn lab-goto [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_goto target lineNum)]
-     (.setOperand insn (LabelOperand. insn target  lineNum))
-     (.addInsn code-attr insn)
-     code-attr
-     ))
+    (.setOperand insn (LabelOperand. insn target lineNum))
+    (.addInsn code-attr insn)
+    code-attr
+    ))
 
 (defn lab-if-acmpne [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_if_acmpne target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -515,7 +516,7 @@
 (defn lab-if-acmpeq [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_if_acmpeq target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -523,7 +524,7 @@
 (defn lab-if-icmpge [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_if_icmpge target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -531,23 +532,23 @@
 (defn lab-if-icmple [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_if_icmpge target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
 
 (defn lab-if-icmpgt [code-attr key lineNum]
-(let [target (env/get-label key)
-      insn (Insn. RuntimeConstants/opc_if_icmpgt target lineNum)]
-  (.setOperand insn (LabelOperand. insn target  lineNum))
-  (.addInsn code-attr insn)
-  code-attr
-  ))
+  (let [target (env/get-label key)
+        insn (Insn. RuntimeConstants/opc_if_icmpgt target lineNum)]
+    (.setOperand insn (LabelOperand. insn target lineNum))
+    (.addInsn code-attr insn)
+    code-attr
+    ))
 
 (defn lab-if-icmplt [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_if_icmplt target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -555,7 +556,7 @@
 (defn lab-if-icmpne [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_if_icmpne target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -563,7 +564,7 @@
 (defn lab-if-icmpeq [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_if_icmpeq target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -571,7 +572,7 @@
 (defn lab-ifge [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_ifge target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -579,7 +580,7 @@
 (defn lab-ifgt [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_ifgt target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -587,7 +588,7 @@
 (defn lab-ifne [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_ifne target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -595,7 +596,7 @@
 (defn lab-ifle [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_ifle target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -603,7 +604,7 @@
 (defn lab-iflt [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_iflt target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -611,7 +612,7 @@
 (defn lab-ifeq [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_ifeq target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -619,7 +620,7 @@
 (defn lab-ifnull [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_ifnull target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))
@@ -627,7 +628,7 @@
 (defn lab-ifnonnull [code-attr key lineNum]
   (let [target (env/get-label key)
         insn (Insn. RuntimeConstants/opc_ifnonnull target lineNum)]
-    (.setOperand insn (LabelOperand. insn target  lineNum))
+    (.setOperand insn (LabelOperand. insn target lineNum))
     (.addInsn code-attr insn)
     code-attr
     ))

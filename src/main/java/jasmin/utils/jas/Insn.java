@@ -10,8 +10,10 @@
 
 package jasmin.utils.jas;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 public class Insn implements RuntimeConstants
@@ -19,9 +21,18 @@ public class Insn implements RuntimeConstants
   int opc;
   InsnOperand operand;
 
+  Functions funs = Functions.NONE;
+
+  private int size = 0;
+
+  ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+
+
                                 // private constructor, for the
                                 // "strange" opcodes
-  Insn() { return; }
+  Insn() {
+    byteOutputStream.reset();
+    return; }
   /**
    * Instructions with no arguments are built with
    * this constructor.
@@ -49,6 +60,35 @@ public class Insn implements RuntimeConstants
     return opc;
   }
 
+  public void addIndex(int index) {
+    add(index >> 8, index);
+  }
+  public void add(int b1, int b2) {
+    byte [] buffer = new byte[10];
+    Arrays.fill(buffer, (byte)0);
+    addGap(2);
+    buffer[size - 2] = (byte)b1;
+    buffer[size - 1] = (byte)b2;
+    byteOutputStream.write(buffer, (size -2), 1);
+    byteOutputStream.write(buffer, (size -1), 1);
+  }
+
+  public void growStack(ClassEnv e,Integer size) {
+
+  }
+
+  public void addGap(int length) {
+    if (size + length > byteOutputStream.size()) {
+      int newSize = size << 1;
+      if (newSize < size + length)
+        newSize = size + length;
+
+      byte[] newBuf = new byte[newSize];
+      byteOutputStream.write(newBuf, 0, newBuf.length);
+    }
+
+    size += length;
+  }
   public InsnOperand operand() {
     return operand;
   }
@@ -331,6 +371,10 @@ public class Insn implements RuntimeConstants
     out.writeByte((byte) opc);
     if (operand != null)
       operand.write(e, ce, out);
+    if (operand == null && !this.funs.equals(Functions.NONE)) {
+      byte[] buffer = byteOutputStream.toByteArray();
+      out.write(buffer); //TODO: have to change this
+    }
   }
 
   int size(ClassEnv e, CodeAttr ce)
@@ -343,6 +387,21 @@ public class Insn implements RuntimeConstants
   public String toString() {
     return "instruction "+opc+" "+((operand!=null)?operand.toString():"");
   }
+
+  public Insn(Functions func, Integer... value) throws jasError {
+    switch(func) {
+      case SET_INDEX -> {addIndex(value[0]); this.funs = Functions.SET_INDEX;}
+      case ADD_WIDE -> {add(value[0], value[1]); this.funs = Functions.ADD_WIDE;}
+    }
+}
+
+
+public static enum Functions {
+  NONE,
+  SET_INDEX,
+  ADD,
+  ADD_WIDE,
+  ;
 }
 
 /* --- Revision History ---------------------------------------------------

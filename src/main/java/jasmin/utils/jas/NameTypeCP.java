@@ -35,7 +35,15 @@ public class NameTypeCP extends CP implements RuntimeConstants
     e.addCPItem(sig);
   }
 
-  public ResultCPIndex cpItems(ClassEnv e) {
+    public AsciiCP name() {
+        return name;
+    }
+
+    public AsciiCP sig() {
+        return sig;
+    }
+
+    public ResultCPIndex cpItems(ClassEnv e) {
     this.resolve(e);
     try {
         return ResultCPIndex.createResultCPIndex(e.getCPIndex(this.name), e.getCPIndex(this.sig));
@@ -73,6 +81,13 @@ public class NameTypeCP extends CP implements RuntimeConstants
             return "ResultCPIndex[]";
         }
 
+        public short first() {
+            return first;
+        }
+
+        public short second() {
+            return second;
+        }
     }
     
   void write(ClassEnv e, DataOutputStream out)

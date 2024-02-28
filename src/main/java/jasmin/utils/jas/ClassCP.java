@@ -9,6 +9,7 @@ package jasmin.utils.jas;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class ClassCP extends CP implements RuntimeConstants
@@ -43,5 +44,19 @@ public class ClassCP extends CP implements RuntimeConstants
   {
     out.writeByte(CONSTANT_CLASS);
     out.writeShort(e.getCPIndex(name));
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    ClassCP classCP = (ClassCP) o;
+    return Objects.equals(name, classCP.name) && Objects.equals(strName, classCP.strName);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), name, strName);
   }
 }

@@ -41,6 +41,10 @@ public class StackMap
     frames = new Vector();
   }
 
+  public Vector frames() {
+    return frames;
+  }
+
   public void addFrame(VerifyFrame f)
   { frames.add(f); }
 

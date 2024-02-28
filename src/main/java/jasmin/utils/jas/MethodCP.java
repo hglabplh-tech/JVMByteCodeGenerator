@@ -34,6 +34,14 @@ public class MethodCP extends CP implements RuntimeConstants
     e.addCPItem(nt);
   }
 
+  public ClassCP clazz() {
+    return clazz;
+  }
+
+  public NameTypeCP nt() {
+    return nt;
+  }
+
   void write(ClassEnv e, DataOutputStream out)
     throws IOException, jasError
   {

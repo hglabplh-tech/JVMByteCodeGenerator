@@ -9,6 +9,7 @@ package jasmin.utils.jas;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class AsciiCP extends CP implements RuntimeConstants
@@ -29,6 +30,21 @@ public class AsciiCP extends CP implements RuntimeConstants
   { return; }
 
   public String toString() { return "AsciiCP: " + uniq; }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    AsciiCP asciiCP = (AsciiCP) o;
+    return Objects.equals(val, asciiCP.val);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), val);
+  }
+
   void write(ClassEnv e, DataOutputStream out)
     throws IOException
   {

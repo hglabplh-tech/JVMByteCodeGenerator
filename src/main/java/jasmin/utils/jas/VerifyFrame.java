@@ -80,6 +80,12 @@ public class VerifyFrame
     return offset;
   }
 
+  public void growStack(int diff) {
+    Integer newSize = stack.size() + diff;
+    stack.setSize(newSize); }
+
+  public int getStackDepth() { return stack.size(); }
+
   void resolve(ClassEnv e)
   {
     Enumeration en = stack.elements();

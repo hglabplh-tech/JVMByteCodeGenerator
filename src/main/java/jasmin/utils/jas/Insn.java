@@ -389,20 +389,29 @@ public class Insn implements RuntimeConstants
   }
 
   public Insn(Functions func, Integer... value) throws jasError {
-    switch(func) {
-      case SET_INDEX -> {addIndex(value[0]); this.funs = Functions.SET_INDEX;}
-      case ADD_WIDE -> {add(value[0], value[1]); this.funs = Functions.ADD_WIDE;}
+    switch (func) {
+      case SET_INDEX -> {
+        addIndex(value[0]);
+        this.funs = Functions.SET_INDEX;
+      }
+      case ADD_WIDE -> {
+        add(value[0], value[1]);
+        this.funs = Functions.ADD_WIDE;
+      }
+    }
+  }
+
+    public enum Functions {
+      NONE,
+      SET_INDEX,
+      ADD,
+      ADD_WIDE,
+      ;
     }
 }
 
 
-public static enum Functions {
-  NONE,
-  SET_INDEX,
-  ADD,
-  ADD_WIDE,
-  ;
-}
+
 
 /* --- Revision History ---------------------------------------------------
 --- Iouri Kharon, Aug 10 2006

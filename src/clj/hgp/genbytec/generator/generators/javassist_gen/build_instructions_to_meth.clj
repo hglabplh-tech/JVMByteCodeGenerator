@@ -1,6 +1,7 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.build-instructions-to-meth
   (:require [hgp.genbytec.generator.generators.javassist-gen.acc-mod-defs :as acc]
             [hgp.genbytec.generator.generators.javassist-gen.insn-simplified :as insn]
+            [hgp.genbytec.generator.generators.javassist-gen.tokens :as tok]
             [hgp.genbytec.generator.generators.javassist-gen.general-defs :as defs]
             [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env]
             [hgp.genbytec.generator.generators.javassist-gen.method-gen-add :as meth-gen]
@@ -66,7 +67,7 @@
 
   )
 
-(defn call-non-dyn-meth [class name signature code-attr param-desc ret-type start-index invoke-type]
+(defn call-non-dyn-meth [class-env class-name meth-name signature code-attr param-desc ret-type start-index invoke-type]
   (let []
     (loop [params param-desc
            cmdidx start-index]
@@ -77,6 +78,6 @@
         CtClass/doubleType (insn/dload-to-code-attr code-attr cmdidx)
         (insn/aload-to-code-attr code-attr cmdidx))
       (recur (next params) (+ cmdidx 1)))
-    (invoke-meth class name signature code-attr param-desc ret-type start-index invoke-type)
+    (invoke-meth class-env class-name meth-name signature code-attr param-desc ret-type start-index invoke-type)
     ))
 

@@ -324,7 +324,6 @@
 
 (defn lstore-to-code-attr [code-attr value]
   (let [insn (Insn. RuntimeConstants/opc_lstore value)]
-
     (.addInsn code-attr insn)
     code-attr
     ))

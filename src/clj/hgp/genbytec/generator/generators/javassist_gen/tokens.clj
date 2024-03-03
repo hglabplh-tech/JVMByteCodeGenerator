@@ -2,10 +2,18 @@
   (:import (javassist CtClass)))
 
 (def tokens
-  [:plus :minus :mult :div :mod :sqrt :exp :lparen :rparen :eqs :assign :gt :lt :ge :le :equal
+  [:not :plus :minus :mult :div :mod :sqrt :exp :lparen :rparen :eqs :assign :gt :lt :ge :le :equal
    :int :long :float :double :any :short :byte :returnType :lambda :paramList])
 
+(defn math-token [next-tok]
+  (if (contains? [:plus :minus :div :mod :mult] next-tok)
+    :math-token
+    :other-token)   )
+
+
+
 (def token-map {
+                :not :not
                 :plus       :plus
                 :minus      :minus
                 :mult       :mult
@@ -62,4 +70,5 @@
                         :returnType 15
                         :lambda     16
                         :paramList  17
+                        :not        18
                         })

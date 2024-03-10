@@ -234,7 +234,6 @@ public class Insn implements RuntimeConstants
       case opc_jsr:
         check_short(val, opc);
         operand = new RelativeOffsetOperand(this, val); break;
-
       case opc_goto_w:
       case opc_jsr_w:
         operand = new RelativeOffsetOperand(this, val, true); break;

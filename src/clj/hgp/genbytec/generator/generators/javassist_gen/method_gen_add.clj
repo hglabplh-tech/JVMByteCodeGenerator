@@ -70,7 +70,7 @@
                              (.getSignatureAttr method-decl)))]
     (.addMethod class-env method-decl)
     (.addCPItem class-env meth-CP)
-    [(.calcCPIndex class-env  meth-CP) meth-CP]
+    [code-attr meth-CP]
     ))
 (defn create-general-method [modifier name parmDesc
                              returnDesc]

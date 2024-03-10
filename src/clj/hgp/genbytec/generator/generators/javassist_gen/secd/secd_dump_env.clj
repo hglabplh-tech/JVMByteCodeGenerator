@@ -1,6 +1,7 @@
-(ns hgp.genbytec.generator.generators.javassist-gen.secd.sedc-dump-env
+(ns hgp.genbytec.generator.generators.javassist-gen.secd.secd-dump-env
   (:require [hgp.genbytec.generator.generators.javassist-gen.util.cljstack :as stack]
-            [hgp.genbytec.generator.generators.javassist-gen.secd.secd-defs :as defs]))
+            [hgp.genbytec.generator.generators.javassist-gen.secd.secd-defs :as defs]
+            [hgp.genbytec.generator.generators.javassist-gen.secd.secd-core-lang :as cl]))
 
 
 

@@ -2,7 +2,7 @@
   (:require [hgp.genbytec.generator.generators.javassist-gen.mini-env :as env])
   (:import (java.lang Boolean)
            (jasmin.utils.jas Insn Label LabelOperand RuntimeConstants)
-           (jasmin.utils.jas RelativeOffsetOperand)))
+           (jasmin.utils.jas RelativeOffsetOperand MultiarrayInsn)))
 
 ;; first of all there is a general functionality for bytecodes without written parameters
 
@@ -20,30 +20,28 @@
 
 ;; CP code group
 (defn putfield-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_putfield, arg)]
-
+  (let [insn (Insn. RuntimeConstants/opc_putfield arg)]
     (.addInsn code-attr insn)
     code-attr))
 
 (defn getfield-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_getfield, arg)]
-
+  (let [insn (Insn. RuntimeConstants/opc_getfield arg)]
     (.addInsn code-attr insn)
     code-attr))
 
 (defn putstatic-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_putstatic, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_putstatic arg)]
     (.addInsn code-attr insn)
     code-attr))
 
 (defn getstttatic-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_getstatic, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_getstatic arg)]
 
     (.addInsn code-attr insn)
     code-attr))
 
 (defn a-new-array-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_anewarray, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_anewarray arg)]
 
     (.addInsn code-attr insn)
     code-attr))
@@ -54,31 +52,31 @@
     code-attr))
 
 (defn invoke-non-virt-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_invokenonvirtual, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_invokenonvirtual arg)]
 
     (.addInsn code-attr insn)
     code-attr))
 
 (defn invoke-static-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_invokestatic, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_invokestatic arg)]
 
     (.addInsn code-attr insn)
     code-attr))
 
 (defn invoke-virtual-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_invokevirtual, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_invokevirtual arg)]
 
     (.addInsn code-attr insn)
     code-attr))
 
 (defn new-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_new, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_new arg)]
 
     (.addInsn code-attr insn)
     code-attr))
 
 (defn checkcast-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_checkcast, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_checkcast arg)]
 
     (.addInsn code-attr insn)
     code-attr))
@@ -86,19 +84,19 @@
 ;; ldc
 
 (defn ldc2-w-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_ldc2_w, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_ldc2_w arg)]
 
     (.addInsn code-attr insn)
     code-attr))
 
 (defn ldc-w-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_ldc_w, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_ldc_w arg)]
 
     (.addInsn code-attr insn)
     code-attr))
 
 (defn ldc-to-codeattr [code-attr arg]
-  (let [insn (Insn. RuntimeConstants/opc_ldc, arg)]
+  (let [insn (Insn. RuntimeConstants/opc_ldc arg)]
 
     (.addInsn code-attr insn)
     code-attr))
@@ -133,10 +131,11 @@
     ))
 
 (defn if-acmpeq-to-code-attr [code-attr value wide?]
-  (let [insn (Insn. RuntimeConstants/opc_if_acmpeq value wide?)]
+  (let [address (.getPc code-attr insn)
+        insn (Insn. RuntimeConstants/opc_if_acmpeq value wide?)]
 
     (.addInsn code-attr insn)
-    code-attr
+
     ))
 
 (defn if-acmpne-to-code-attr [code-attr value wide?]
@@ -647,3 +646,11 @@
     (.addInsn code-attr insn)
     code-attr
     ))
+
+
+;; MultiArray
+
+(defn multiarray-to-codeattr [code-attr cp dimensions]
+  (let [insn (MultiarrayInsn. cp dimensions)]
+    (.addInsn code-attr insn)
+    code-attr))

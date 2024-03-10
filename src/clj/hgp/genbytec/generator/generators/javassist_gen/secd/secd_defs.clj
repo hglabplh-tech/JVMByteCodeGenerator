@@ -1,5 +1,6 @@
 (ns hgp.genbytec.generator.generators.javassist-gen.secd.secd-defs
   (:require [active.clojure.record-spec :refer [define-record-type]]
+            [hgp.genbytec.generator.generators.javassist-gen.secd.secd-core-lang :as cl]
             ))
 
 
@@ -121,10 +122,7 @@
 ; - ein Basiswert
 ; - eine Liste mit einem Primitivum als erstem Element
 ;      (für eine primitive Applikation)
-(def primitives [ '+ '- '/ '* '% =])
 
-(defn primitive? [token]
-  (contains? primitives token))
 (def sym (make-signature 'predicat symbol?))
 
 
@@ -136,14 +134,14 @@
 (defn application?   [term]
                 (and (list? term)
                      (not (= 'lambda (first term)))
-                     (not (primitive? (first term)))))
+                     (not (cl/primitive? (first term)))))
 
 (def application (make-signature 'predicate application?))
 
 (defn primitive-application?
   [term]
                 (and (list? term)
-                     (primitive? (first term))))
+                     (cl/primitive? (first term))))
 
 (def primitive-application (make-signature 'predicate primitive-application?))
 
@@ -167,7 +165,4 @@
 
 (def machine-code (make-signature 'list-of instruction))
 
-
-
-(println(symbol? 'p) )
 

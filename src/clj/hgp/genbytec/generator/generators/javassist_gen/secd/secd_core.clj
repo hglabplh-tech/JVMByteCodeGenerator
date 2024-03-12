@@ -3,7 +3,9 @@
             [hgp.genbytec.generator.generators.javassist-gen.secd.secd-defs :as defs]
             [hgp.genbytec.generator.generators.javassist-gen.secd.secd-dump-env :as env]
             [hgp.genbytec.generator.generators.javassist-gen.secd.secd-core-lang :as cl]
-            [hgp.genbytec.generator.generators.javassist-gen.secd.secd-bytecode :as bcode]))
+            [hgp.genbytec.generator.generators.javassist-gen.secd.secd-bytecode :as bcode])
+  (:import (javassist CtClass)))
+
 
 
 
@@ -18,7 +20,7 @@
         (recur (- n 1) (rest list) (cons (first list) acc)))))
    n list0 '()))
 ;;
-(defn trace-code [inst-and-values]
+(defn pseudo->bytecode [class-name inst-and-values]
   (loop [complete-list inst-and-values
          seq-order-list (first complete-list)
          token    (first seq-order-list)]
@@ -30,14 +32,13 @@
       (do
         (bcode/environment-lookup (second seq-order-list))  ;; this function is designeed to put the value already on the stack
         )
-
       (cl/primitive? token)                                 ;;look for the second parameter
       (let [param (second seq-order-list)
             res-list (rest (rest seq-order-list))
             sec-param (first res-list)]
        (if (cl/reference? param)
          (let [[type val] param
-               binding-type ()]
+              ]
          (bcode/environment-lookup val))
          (let [[type val] param]
            (bcode/push-const type val))
@@ -48,43 +49,46 @@
           (bcode/push-const type val))
         )
        (bcode/execute-op-by-type (first token) type)
-
        )
+      ;; here in abstract? the abstract functions (lambda's) are defined and compiled
       (cl/abstract? token)
-      (do  (defs/make-secd (cons (defs/make-closure (abst-variable token)
-                                               (abst-code token)
-                                               environment)
-                            stack)
-                      environment
-                      (rest seq-order-list)
-                      dump))
-      (env/ap? token)
-      (do (let [closure (stack/pop env/op-stack)
-                on-stack  (stack/peek env/op-stack)
-                ]
-            (env/add-reference  (closure-environment closure) (closure-variable closure))
-            (env/remove-reference on-stack)
-            (env/add-frame-to-dump env/op-stack
-                                   env/act-machine-env (rest seq-order-list))
-            (defs/make-secd env/op-stack
-                            env/act-machine-env
-                            (rest seq-order-list)
-                            env/machine-dump)
-            ))
-      (env/tailap? token)
-      (do (let [closure (stack/pop env/op-stack)
-                on-stack  (stack/peek env/op-stack)
-                ]
-            (env/add-reference  (closure-environment closure) (closure-variable closure))
-            (env/remove-reference on-stack)
-            (env/add-frame-to-dump env/op-stack
-                                   env/act-machine-env (rest seq-order-list))
-            (defs/make-secd env/op-stack
-                            env/act-machine-env
-                            (rest seq-order-list)
-                            env/machine-dump)
-            ))
-      (empty? code)
+      (let [rest-forms (next seq-order-list)
+            parm-list (first rest-forms)
+            body (next rest-forms)]
+        (let [var-def (first parm-list)]
+          (if (not (empty? var-def))
+            (do (stack/push env/op-stack var-def))
+            )
+          (bcode/add-closure-code-meth class-name (str (gensym "clojure-meth")) CtClass/intType [CtClass/intType]) ;; TODO: change type handling
+          (recur body ((first body) (first (first body))))
+             ;; add to environment .....
+        )
+      ;; in application? ap? the functions (lambdas are called and executed
+      (cl/ap? token)
+      (let [rest-forms (next seq-order-list)
+            reference? (cl/reference?  (first rest-forms))
+            body (next rest-forms)]
+        (if reference?
+          (let [dummy (bcode/environment-lookup val)])  ;; get from env on stack
+          (let [static-ref  (recur body ((first body) (first (first body))))
+                dummy2 (stack/push env/op-stack val)]                                           ;; put on stack
+            )  ;; define and after that call // recursion
+          )
+        ;; here the invocation follows
+        )
+      (cl/tailap? token)
+        (let [rest-forms (next seq-order-list)
+              reference? (cl/reference?  (first rest-forms))
+              body (next rest-forms)]
+          (if reference?
+            (let [dummy (bcode/environment-lookup val)])  ;; get from env on stack
+            (let [static-ref  (recur body ((first body) (first (first body))))
+                  ]                                           ;; put on stack
+              )  ;; define and after that call // recursion
+            )
+          ;; here the invocation follows
+          )
+      (empty? token)
       (let [frame (first dump)]
         (make-secd
           (cons (first stack)
@@ -117,3 +121,7 @@
                    (/ (first args) (first (rest args)))))
 
 
+  (defn initCompile [class-name pseudo-code]
+    (bcode/make-program-class class-name)
+    (pseudo->bytecode pseudo-code)
+    )

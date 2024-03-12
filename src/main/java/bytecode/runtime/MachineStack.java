@@ -4,7 +4,11 @@ import java.util.Stack;
 
 public class MachineStack {
 
-    Stack<Object> theStack = new Stack<>();
+    private final Stack<Object> theStack = new Stack<>();
+
+    public MachineStack () {
+
+    }
 
     public Object popStack() {
         if (!theStack.empty()) {

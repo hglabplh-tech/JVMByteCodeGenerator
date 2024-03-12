@@ -8,7 +8,7 @@ public class ByteCodeEnv {
 
     private  Map<String, Binding> environment = new LinkedHashMap<>();
 
-    private ByteCodeEnv() {
+    public ByteCodeEnv() {
 
     }
 
@@ -16,7 +16,7 @@ public class ByteCodeEnv {
         return Collections.unmodifiableMap( environment);
     }
 
-    public  synchronized void addBinding(String ref, Object val, Symbol typeId) {
+    public  synchronized void addBinding(String ref, Object val, String typeId) {
         Binding newBinding = new Binding(ref, val, typeId);
         environment.put(ref, newBinding);
     }
@@ -40,9 +40,9 @@ public class ByteCodeEnv {
 
         private final Object value;
 
-        private final Symbol typeId;
+        private final String typeId;
 
-        public Binding(String varRef, Object value, Symbol typeId) {
+        public Binding(String varRef, Object value, String typeId) {
             this.varRef = varRef;
             this.value = value;
             this.typeId = typeId;
@@ -56,7 +56,7 @@ public class ByteCodeEnv {
             return value;
         }
 
-        public Symbol typeId() {
+        public String typeId() {
             return typeId;
         }
 

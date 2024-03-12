@@ -8,11 +8,11 @@
 
 
 (def var-const-types {:long ":long"
-                      :integer ":integer"
-                      :float ":float"
-                      :double ":double"
-                      :string ":string"
-                      :utf8 ":utf8"})
+                      :integer  ":integer"
+                      :float    ":float"
+                      :double   ":double"
+                      :string   ":string"
+                      :utf8     ":utf8"})
 
 (defn var-type? [input]
   (contains? var-const-types input))
@@ -32,11 +32,14 @@
   (contains? fun-impl-keywords token))
 
 (def :const)
-(def :value)
-(def :var-reference)
-(def :abstract-reference)
 
-(def ref-keywords (:var-reference :abstract-reference))
+(def :value)
+
+(def :var-ref)
+
+(def :abstract-ref)
+
+(def ref-keywords (:var-ref :abstract-ref))
 
 (defn reference? [token]
   (contains? ref-keywords token))
@@ -46,14 +49,19 @@
   (contains? primitives token))
 
 ;; the syntax
+(defn ap? [token]
+  (= token :invoke))
+
+(def tailap? ap?)
 
 (def primitive-syn [primitive? [reference? '...]])
 
-(def invoke-syn [:invoke :abstract-reference [reference? '...]])
+(def invoke-syn ( :invoke [:abstract-ref reference?]  [reference? '...]))
 
-(def lambda-syn [:lambda [reference?] '([:code-body])])
+(def lambda-syn [:lambda [reference?] [:code-body]])
+(def code-body-syn ())
 (def const-syn [:const [var-type? :value]])
-(def defn-syn [:defn  :abstract-reference [reference? '...] '([:code-body])])
+(def defn-syn [:defn  :abstract-ref [reference? '...] '(:code-body)])
 (def fn-syn [:fn [reference? '...] '([:code-body])])
 
 (def code-body-syn [invoke-syn lambda-syn fn-syn defn-syn reference? primitive-syn ])

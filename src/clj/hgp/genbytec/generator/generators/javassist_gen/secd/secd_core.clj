@@ -100,7 +100,7 @@
 
 
     (recur (rest complete-list) (first (rest complete-list))
-           (if (or (cl/primitive? (first (rest complete-list))) (defs/ap? (first (rest complete-list))))
+           (if (or (cl/primitive? (first (rest complete-list))) (cl/ap? (first (rest complete-list))))
              (first (rest complete-list))
              (first (first (rest complete-list))))
            )))

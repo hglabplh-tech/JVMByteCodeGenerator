@@ -1,0 +1,1 @@
+Here a test SECD mini VM will take place to check the functionality

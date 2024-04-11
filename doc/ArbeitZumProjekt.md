@@ -1,0 +1,1 @@
+# Welchen Einfluss und Weiterentwicklung haben diese Prinzipien erfahren -- von VSE,MVS, VM/CMS zu zOS (Linux) Zur Veranschaulichung verwenden wir dieses Projekt

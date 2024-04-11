@@ -1,9 +1,11 @@
-# Eine VM/CMS Umgebung in (Clojure, Java) mit 360/370 Assembler (Assembly und Module im Mainframe format (original) - Welchen Einfluss und Weiterentwicklung haben diese Prinzipien erfahren -- von VSE,MVS, VM/CMS zu zOS (Linux)
+# Eine VM/CMS Umgebung in (Clojure, Java) mit 360/370 Assembler (Assembly und Module im Mainframe format (original) 
 
 
 ## Der Emulator
 
 ### Die Basis das heißt die Maschine mit 370 Architektur (Prozessor, Speicher, Festblatte , Virtuelle Disk)
+
+### Das PSW (Program Status Word) - Was ist da alles drin
 
 ### Periferie Bildschirm Ausgabe... Tastatur Eingabe (Original EBCDIC) 
 
